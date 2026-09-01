@@ -1,722 +1,216 @@
 ---
-// 심현민 포트폴리오 — mannomi.cloud/about 구조 참고
-// 경력/프로젝트/오픈소스 항목의 "자세히 보기" 링크는 아직 상세 페이지가 없어 #으로 비워둠.
-// 다음 단계에서 src/pages/posts/*.astro 로 채우면서 연결.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
 
-const email = "shm66371945@gmail.com";
-const github = "https://github.com/stlahxm";
+const posts = (await getCollection("posts")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 
-const career = [
-  {
-    company: "(주) 에듀템 웹개발팀",
-    role: "백엔드 인턴",
-    period: "2026.03 – 2026.06",
-    summary: "자사 서비스 핵심 API 리팩토링 및 성능 개선을 위한 백그라운드 처리 모듈 설계 참여",
-    bullets: [
-      "외부 API를 순차 호출하며 응답 대기 중에도 커넥션을 붙잡던 구조로 인한 150 VUs 부하 테스트 전량 실패를, CompletableFuture로 호출을 병렬 실행하고 DB 커넥션 점유 시간을 분리해 해결, p95 응답 속도 7.2s → 363ms 단축",
-      "WHERE NOT EXISTS 조건부 삽입에 맞는 인덱스가 없어 풀 테이블 스캔·락 확산이 발생하던 문제를, 조회 조건 순서에 맞춘 복합 인덱스로 락 범위를 유저 단위로 좁혀 해결 → p95 8.86s→1.45s(83.6%↓), TPS 5.2배↑",
-      "WHERE NOT EXISTS 원자적 쿼리에서도 갭 락 경합으로 데드락이 빈발하던 문제를, 유니크 인덱스 기반으로 선조회 없이 즉시 insert 후 충돌 시에만 재조회하는 방식으로 전환해 해결, 500 VUs 부하 테스트로 데드락·중복 세션 생성 0건 확인",
-      "오래 걸리는 API가 톰캣 공용 스레드를 소진시켜 로그인 등 핵심 API까지 마비되던 문제를, 오래 걸리는 API 전용 스레드 풀로 분리하고 풀 포화 시 대기 없이 즉시 거절하도록 해 해결, 과부하 중에도 핵심 API 지연 124ms 수준 방어",
-      "퀴즈 재생성(삭제 후 재삽입) 로직에서 같은 클래스 내 메서드 직접 호출로 트랜잭션 프록시를 거치지 못해, 삽입 실패 시 삭제까지 롤백되지 않고 퀴즈 테이블이 통째로 비던 문제를, 삭제·재삽입 로직을 별도 서비스 빈으로 분리해 프록시가 정상 적용되도록 해결",
-      "AI 응답 대기 중 톰캣 스레드와 DB 커넥션이 함께 점유돼 서비스 전체가 마비되던 문제를, AI 호출 전용 스레드풀 분리와 트랜잭션 범위를 DB 작업 구간만으로 좁혀 해결, p95 47.2s→2.8s(93.9%↓), 처리량 3.4배↑",
-    ],
-  },
-];
-
-const projects = [
-  {
-    no: "01",
-    name: "모릭 (Mori-Q)",
-    period: "2025.09 ~",
-    tag: "대학생 AI 학습 생산성 플랫폼",
-    links: [{ label: "GitHub", href: "#" }, { label: "홈페이지", href: "#" }],
-    summary: "총 사용자 200+, MAU 100+ | 백엔드 아키텍처 설계 및 백그라운드 AI 분석 파이프라인 구축 주도",
-    bullets: [
-      "수백 페이지 문서 분석 같은 오래 걸리는 AI 연산을 요청 스레드가 직접 처리해 Cloud Run 타임아웃(60s)을 넘기면 504가 발생하던 구조를, API는 Redis 큐에 작업 등록만 하고 바로 응답하며 실제 처리는 별도 ARQ 워커가 백그라운드로 수행하도록 분리해 해결, 요청 처리 성공률 97.4% 달성",
-      "동일 강의자료 중복 업로드 시 분석 결과가 DB에 저장되기 전 캐시 공백(약 5분) 동안 AI API가 중복 호출되던 문제를, 먼저 온 요청만 Redis 락(SET NX EX)으로 처리하고 나머지는 30초 뒤 재시도하도록 큐에 다시 넣어(ARQ defer) 해결, 캐시 적중률 21.6%, 월 약 100만 토큰 이상의 중복 호출 비용 방어",
-      "자료 분석 실패·API 타임아웃이 낮은 빈도로 발생해 로그에 묻히며 사용자 제보 전까지 인지하지 못하던 문제를, 로그를 Pub/Sub→Cloud Function 거쳐 Discord로 실시간 전파하고 에러 원인 11종 자동 분류+3시간 주기 상태 리포트로 해결해 저빈도 에러까지 추적 가능한 운영 체계 확보",
-      "크레딧 차감이 AI 워커에서 비동기로 처리되며 생기는 지연 구간을 연타로 악용해 발생하던 마이너스 크레딧 문제를, 프론트에서 클릭 즉시 잔액을 먼저 차감하고 AI 워커 실패 시 환불 API를 호출해 되돌리는 방식으로 해결",
-      "퀴즈 이력 목록 조회 API의 전체 이력 무제한 로드와 N+1 반복 쿼리를, 페이지 조회와 IN절 일괄조회로 전환해 해결, 쿼리 수를 이력 누적량과 무관하게 고정(400건 기준 881회→3회)",
-    ],
-  },
-  {
-    no: "02",
-    name: "llm-markdown-sanitizer",
-    period: "2026.08 ~",
-    tag: "PyPI 3600+ 다운로드 오픈소스 라이브러리",
-    links: [
-      { label: "GitHub", href: "#" },
-      { label: "PyPI", href: "#" },
-      { label: "JitPack", href: "#" },
-    ],
-    summary: "LLM이 생성한 마크다운에서 실제로 발생하는 오류를 정제하는 라이브러리",
-    bullets: [
-      "모릭 프로젝트에서 겪은 문제를 계기로, 여러 커뮤니티와 주요 LLM 도구 이슈 트래커에서 흔히 보고되는 마크다운 깨짐 유형을 분류해 정제하는 라이브러리로 일반화",
-      "Python(PyPI), Java(JitPack) 두 언어로 지원해 모릭 실서버 파이프라인에 배포, 실제 응답의 20% 이상에서 마크다운 오류를 자동 탐지·정제",
-    ],
-  },
-];
-
-const openSource = [
-  {
-    repo: "redisson/redisson",
-    count: "5 issues · 4 merged PRs",
-    items: [
-      {
-        title: "BaseTransactionalMap.isEqual() ByteBuf 누수",
-        desc: "트랜잭션 처리 시마다 ByteBuf가 해제되지 않고 누적되는 누수를 발견, 메인테이너가 후속 PR로 수정",
-        issue: "https://github.com/redisson/redisson/issues/7302",
-        pr: "https://github.com/redisson/redisson/pull/7303",
-      },
-      {
-        title: "getEx() TTL 옵션 무시 버그",
-        desc: "PERSIST/KEEPTTL/EXAT/PXAT 옵션을 무시하고 항상 상대 시간(PX)으로 처리해 TTL이 의도와 다르게 설정되는 버그를 Spring Data Redis 전체 버전 모듈에 걸쳐 수정",
-        issue: "https://github.com/redisson/redisson/issues/7308",
-        pr: "https://github.com/redisson/redisson/pull/7309",
-      },
-      {
-        title: "set() KEEPTTL·절대시각 만료 오처리",
-        desc: "캐시 항목이 의도치 않게 즉시 만료되거나 영구 보존되는 버그를 Spring Data Redis 전체 버전 모듈에 걸쳐 수정",
-        issue: "https://github.com/redisson/redisson/issues/7315",
-        pr: "https://github.com/redisson/redisson/pull/7316",
-      },
-      {
-        title: "RedissonKeysRx SCAN 커서 중복 구현",
-        desc: "기존 RxIteratorConsumer와 중복 구현된 SCAN 커서 순회 로직을 발견, 공용 유틸을 재사용하도록 리팩터링",
-        issue: "https://github.com/redisson/redisson/issues/7311",
-        pr: "https://github.com/redisson/redisson/pull/7312",
-      },
-      {
-        title: "RedissonCache.retrieve() 센티널 객체 반환",
-        desc: "캐시된 null 값을 재조회할 때 내부 센티널 객체를 그대로 반환해 캐시 조회 결과가 오염되는 버그를 수정",
-        issue: "https://github.com/redisson/redisson/issues/7326",
-        pr: "https://github.com/redisson/redisson/pull/7327",
-      },
-    ],
-  },
-  {
-    repo: "lukas-krecan/ShedLock",
-    count: "2 issues · 1 PR (리뷰 중)",
-    items: [
-      {
-        title: "JooqLockProvider 트랜잭션 공유 시 정합성 문제",
-        desc: "이미 열린 트랜잭션(auto-commit=false)에 바인딩된 DSLContext를 그대로 사용할 때, lock_until이 stale 스냅샷으로 계산되거나 호출자의 무관한 데이터가 조용히 함께 커밋되는 문제를 재현·리포트하고 DataSource 기반 격리를 선택적으로 적용할 수 있는 수정을 제안",
-        issue: "https://github.com/lukas-krecan/ShedLock/issues/3682",
-        pr: "https://github.com/lukas-krecan/ShedLock/pull/3684",
-      },
-    ],
-  },
-  {
-    repo: "langchain4j/langchain4j",
-    count: "2 issues · 1 merged, 1 리뷰 중",
-    items: [
-      {
-        title: "HierarchicalDocumentSplitter IndexOutOfBoundsException",
-        desc: "서브스플리터가 빈 배열을 반환할 때 발생하는 예외를 실제 PDF 추출 데이터로 재현·근본 원인 추적해 제보, 이슈 기반으로 커뮤니티 기여자에 의해 수정·머지됨",
-        issue: "https://github.com/langchain4j/langchain4j/issues/6085",
-        pr: "https://github.com/langchain4j/langchain4j/pull/6091",
-      },
-      {
-        title: "loadDocuments() 파일 하나 실패 시 배치 전체 중단",
-        desc: "파일별 파싱 실패는 개별적으로 잡아 건너뛰되 CancellationException만 별도로 구분해 그대로 전파시키는 방식으로 수정 PR 제출",
-        issue: "https://github.com/langchain4j/langchain4j/issues/6095",
-        pr: "https://github.com/langchain4j/langchain4j/pull/6096",
-      },
-    ],
-  },
-];
-
-const activities = [
-  {
-    title: "핏핏 — 중고의류 판매 서비스",
-    period: "탄소중립 INNOVATION ACADEMY 최우수상 · 2025.12",
-    bullets: [
-      "백엔드와 AI 기능을 전담해 상품 등록·거래·판매자-구매자 채팅 기능을 구현하고, 가상 피팅 API를 연동",
-      "Spring Data JPA/QueryDSL로 도메인 모델링, GitHub Actions 기반 AWS EC2 CI/CD 배포 파이프라인 구성",
-    ],
-  },
-  {
-    title: "땅보고 — 공공데이터 활용 창업경진대회 출품작",
-    period: "서비스 개발 전담 · 2026.07 ~ 현재",
-    bullets: [
-      "국토교통부, 한국농어촌공사 등 다종의 공공데이터 오픈 API를 연동하여 농지 위험 요인 수집 파이프라인 구축",
-      "외부 API 실패 시 예외를 전파하지 않고 일관된 폴백값을 반환하도록 설계, 일시적 오류는 지수 백오프 재시도로 방어",
-      "150 VUs로 6개 분석 항목의 순차 호출 병목을 확인하고 스레드풀 병렬화로 p95 응답 32.8% 단축, 처리량 1.6배 향상",
-    ],
-  },
-];
-
-// 첫 화면에서 전체 이력을 한눈에 보여주는 가로형 타임라인 — 연도별 큰 마일스톤만
-const timeline = [
-  {
-    year: "2021",
-    items: [{ text: "인하대학교 컴퓨터공학과 입학", anchor: "#education" }],
-  },
-  {
-    year: "2025",
-    items: [
-      { text: "모릭(Mori-Q) 프로젝트 시작", anchor: "#projects" },
-      { text: "핏핏 — 탄소중립 INNOVATION ACADEMY 최우수상", anchor: "#activities" },
-    ],
-  },
-  {
-    year: "2026",
-    items: [
-      { text: "(주) 에듀템 웹개발팀 백엔드 인턴", anchor: "#career" },
-      { text: "redisson 등 오픈소스 기여 시작", anchor: "#opensource" },
-      { text: "땅보고 서비스 개발 전담", anchor: "#activities" },
-      { text: "llm-markdown-sanitizer 배포", anchor: "#projects" },
-    ],
-  },
-];
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
 ---
 
-<html lang="ko">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <title>심현민 · 백엔드 개발자</title>
-    <meta
-      name="description"
-      content="동시성 제어, 쿼리·인덱스 최적화, 오픈소스 기여를 해온 백엔드 개발자 심현민의 포트폴리오"
-    />
-  </head>
-  <body>
-    <header class="site-header">
-      <nav>
-        <a href="#top" class="brand">심현민</a>
-        <div class="nav-links">
-          <a href="#career">경력</a>
-          <a href="#projects">프로젝트</a>
-          <a href="#opensource">오픈소스</a>
-          <a href="#activities">활동</a>
-          <a href={github} target="_blank" rel="noreferrer">GitHub</a>
-        </div>
-      </nav>
-    </header>
+<BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
+  <main>
+    <section class="page-head">
+      <h1>글</h1>
+      <p>문제를 어떻게 진단하고 왜 그 방식을 선택했는지 정리한 기록입니다.</p>
+    </section>
 
-    <main id="top">
-      <section class="hero">
-        <h1>심현민</h1>
-        <p class="hero-role">Java, Spring Boot 기반 백엔드 개발자</p>
-        <p class="hero-desc">
-          동시성 제어, 쿼리·인덱스 최적화, 스레드·자원 격리, 백그라운드
-          처리 구조 설계를 해왔고, redisson 등 오픈소스에도 기여하고
-          있습니다. 겉으로 드러나지 않는 문제의 원인을 코드와 실측
-          데이터로 끝까지 추적해 검증하는 것을 지향합니다.
-        </p>
-        <div class="tags">
-          <span>Java (Spring Boot)</span>
-          <span>JPA/Hibernate</span>
-          <span>MySQL</span>
-          <span>Redis</span>
-          <span>PostgreSQL</span>
-          <span>Docker</span>
-          <span>AWS</span>
-          <span>GCP</span>
-        </div>
-        <p class="contact-line">
-          <a href={`mailto:${email}`}>{email}</a>
-          <span class="dot">·</span>
-          <a href={github} target="_blank" rel="noreferrer">GitHub</a>
-        </p>
-      </section>
+    <div class="tag-filter" id="tag-filter">
+      <button class="tag-chip active" data-tag="">전체 ({posts.length})</button>
+      {
+        tags.map(([tag, count]) => (
+          <button class="tag-chip" data-tag={tag}>
+            {tag} ({count})
+          </button>
+        ))
+      }
+    </div>
 
-      <section class="timeline-section">
-        <div class="timeline">
-          {
-            timeline.map((col) => (
-              <div class="timeline-col">
-                <span class="timeline-year">{col.year}</span>
-                <span class="timeline-tick" />
-                <ul class="timeline-items">
-                  {col.items.map((item) => (
-                    <li>
-                      <a href={item.anchor}>{item.text}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          }
-        </div>
-      </section>
-
-      <script>
-        const timelineEl = document.querySelector<HTMLDivElement>(".timeline");
-        timelineEl?.addEventListener(
-          "wheel",
-          (e) => {
-            if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-            e.preventDefault();
-            timelineEl.scrollLeft += e.deltaY;
-          },
-          { passive: false },
-        );
-      </script>
-
-      <section id="career" class="section">
-        <h2>경력 <span class="count">({career.length} role)</span></h2>
-        {
-          career.map((job) => (
-            <article class="card">
-              <div class="card-head">
-                <h3>{job.company}</h3>
-                <span class="period">{job.period}</span>
-              </div>
-              <p class="role">{job.role}</p>
-              <p class="summary">{job.summary}</p>
-              <ul class="bullets">
-                {job.bullets.map((b) => (
-                  <li>
-                    {b} <a class="detail-link" href="#">자세히 보기 ↗</a>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))
-        }
-      </section>
-
-      <section id="projects" class="section">
-        <h2>프로젝트 <span class="count">({projects.length} projects)</span></h2>
-        {
-          projects.map((p) => (
-            <article class="card">
-              <div class="card-head">
-                <h3><span class="no">{p.no}</span> {p.name}</h3>
-                <span class="period">{p.period}</span>
-              </div>
-              <p class="tag-line">{p.tag}</p>
-              <div class="links">
-                {p.links.map((l) => (
-                  <a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>
-                ))}
-              </div>
-              <p class="summary">{p.summary}</p>
-              <ul class="bullets">
-                {p.bullets.map((b) => (
-                  <li>
-                    {b} <a class="detail-link" href="#">자세히 보기 ↗</a>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))
-        }
-      </section>
-
-      <section id="opensource" class="section">
-        <h2>
-          오픈소스{" "}
-          <span class="count">
-            ({openSource.length} repos ·{" "}
-            {openSource.reduce((sum, r) => sum + r.items.length, 0)} issues)
-          </span>
-        </h2>
-        {
-          openSource.map((repo) => (
-            <div class="oss-repo">
-              <div class="oss-repo-head">
-                <h3>{repo.repo}</h3>
-                <span class="period">{repo.count}</span>
-              </div>
-              <ul class="oss-list">
-                {repo.items.map((item) => (
-                  <li>
-                    <p class="oss-title">{item.title}</p>
-                    <p class="oss-desc">{item.desc}</p>
-                    <div class="links">
-                      <a href={item.issue} target="_blank" rel="noreferrer">이슈 ↗</a>
-                      <a href={item.pr} target="_blank" rel="noreferrer">PR ↗</a>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+    <div class="post-grid" id="post-grid">
+      {
+        posts.map((post) => (
+          <a
+            class="post-card"
+            href={`/posts/${post.id}/`}
+            data-tags={post.data.tags.join(",")}
+          >
+            <div class="post-cover">
+              <span>{post.data.badge}</span>
             </div>
-          ))
-        }
-      </section>
-
-      <section id="activities" class="section">
-        <h2>활동 <span class="count">({activities.length} projects)</span></h2>
-        {
-          activities.map((a) => (
-            <article class="card">
-              <div class="card-head">
-                <h3>{a.title}</h3>
-              </div>
-              <p class="period">{a.period}</p>
-              <ul class="bullets">
-                {a.bullets.map((b) => (
-                  <li>{b}</li>
+            <div class="post-body">
+              <p class="post-meta">
+                {post.data.category} ·{" "}
+                {post.data.pubDate.toLocaleDateString("ko-KR", {
+                  year: "numeric",
+                  month: "2-digit",
+                })}
+              </p>
+              <h2>{post.data.title}</h2>
+              <p class="post-desc">{post.data.description}</p>
+              {post.data.metric && <p class="post-metric">{post.data.metric}</p>}
+              <div class="post-tags">
+                {post.data.tags.map((tag) => (
+                  <span>{tag}</span>
                 ))}
-              </ul>
-            </article>
-          ))
-        }
-      </section>
+              </div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </main>
 
-      <section id="education" class="section">
-        <h2>학력</h2>
-        <article class="card">
-          <div class="card-head">
-            <h3>인하대학교</h3>
-            <span class="period">2021.03 – 2027.02(졸업예정)</span>
-          </div>
-          <p class="summary">
-            컴퓨터공학과 학사 · 전공 평점 3.91 / 4.5 (3학점만 남아 야간 병행,
-            즉시 근무 가능)
-          </p>
-        </article>
-      </section>
-    </main>
+  <script>
+    const filterEl = document.getElementById("tag-filter");
+    const gridEl = document.getElementById("post-grid");
+    const active = new Set<string>();
 
-    <footer class="site-footer">
-      <p>
-        <a href={`mailto:${email}`}>{email}</a>
-        <span class="dot">·</span>
-        <a href={github} target="_blank" rel="noreferrer">GitHub</a>
-      </p>
-      <p class="copyright">© 2026 심현민</p>
-    </footer>
+    filterEl?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag-chip");
+      if (!btn) return;
+      const tag = btn.dataset.tag ?? "";
 
-    <style>
-      :root {
-        --bg: #ffffff;
-        --border: #e5e5e5;
-        --text: #1a1a1a;
-        --text-muted: #767676;
-        --text-heading: #111111;
-        --accent: #2563eb;
-        --max-width: 640px;
+      if (tag === "") {
+        active.clear();
+      } else {
+        active.has(tag) ? active.delete(tag) : active.add(tag);
       }
 
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #0b0b0c;
-          --border: #262626;
-          --text: #e6e6e6;
-          --text-muted: #8a8a8a;
-          --text-heading: #ffffff;
-          --accent: #60a5fa;
-        }
-      }
+      filterEl.querySelectorAll<HTMLButtonElement>(".tag-chip").forEach((el) => {
+        const t = el.dataset.tag ?? "";
+        el.classList.toggle("active", t === "" ? active.size === 0 : active.has(t));
+      });
 
-      * {
-        box-sizing: border-box;
-      }
+      gridEl?.querySelectorAll<HTMLAnchorElement>(".post-card").forEach((card) => {
+        const cardTags = (card.dataset.tags ?? "").split(",");
+        const visible = active.size === 0 || cardTags.some((t) => active.has(t));
+        card.style.display = visible ? "" : "none";
+      });
+    });
+  </script>
 
-      html {
-        scroll-behavior: smooth;
-      }
+  <style>
+    main {
+      max-width: var(--max-width-wide);
+      margin: 0 auto;
+      padding: 3.5rem 1.25rem 1rem;
+    }
+    .page-head h1 {
+      font-size: 1.6rem;
+      margin: 0 0 0.4rem;
+      color: var(--text-heading);
+    }
+    .page-head p {
+      color: var(--text-muted);
+      margin: 0 0 2rem;
+    }
 
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--text);
-        font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-          "Segoe UI", sans-serif;
-        line-height: 1.65;
-        font-size: 15px;
-        -webkit-font-smoothing: antialiased;
-      }
+    .tag-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2.2rem;
+      padding-bottom: 1.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tag-chip {
+      font: inherit;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      cursor: pointer;
+    }
+    .tag-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .tag-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
 
-      a {
-        color: var(--accent);
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-
-      .site-header {
-        border-bottom: 1px solid var(--border);
-      }
-      .site-header nav {
-        max-width: var(--max-width);
-        margin: 0 auto;
-        padding: 1.1rem 1.25rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      .brand {
-        font-weight: 600;
-        color: var(--text-heading);
-      }
-      .nav-links {
-        display: flex;
-        gap: 1.1rem;
-        font-size: 0.85rem;
-      }
-      .nav-links a {
-        color: var(--text-muted);
-      }
-      .nav-links a:hover {
-        color: var(--accent);
-      }
-
-      main {
-        max-width: var(--max-width);
-        margin: 0 auto;
-        padding: 3.5rem 1.25rem 1rem;
-      }
-
-      .hero h1 {
-        font-size: 1.9rem;
-        font-weight: 700;
-        margin: 0 0 0.3rem;
-        color: var(--text-heading);
-      }
-      .hero-role {
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        margin: 0 0 1.1rem;
-      }
-      .hero-desc {
-        color: var(--text);
-        max-width: 58ch;
-        margin: 0 0 1.3rem;
-      }
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        margin: 0 0 1.3rem;
-      }
-      .tags span {
-        font-size: 0.76rem;
-        color: var(--text-muted);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 0.15rem 0.65rem;
-      }
-      .contact-line {
-        color: var(--text-muted);
-        font-size: 0.88rem;
-      }
-      .dot {
-        margin: 0 0.4rem;
-      }
-
-      .timeline-section {
-        margin-top: 2.8rem;
-        padding-top: 1.8rem;
-        border-top: 1px solid var(--border);
-        max-width: 100vw;
-      }
-      .timeline {
-        display: flex;
-        gap: 2.4rem;
-        overflow-x: auto;
-        padding-bottom: 0.3rem;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-      .timeline::-webkit-scrollbar {
-        display: none;
-      }
-      .timeline-col {
-        flex: 0 0 auto;
-        min-width: 150px;
-      }
-      .timeline-year {
-        display: block;
-        font-weight: 700;
-        font-size: 1rem;
-        color: var(--text-heading);
-        margin-bottom: 0.6rem;
-      }
-      .timeline-tick {
-        display: block;
-        position: relative;
-        border-top: 1px dashed var(--border);
-        margin-bottom: 0.9rem;
-      }
-      .timeline-tick::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: -4px;
-        width: 1px;
-        height: 8px;
-        background: var(--text-muted);
-      }
-      .timeline-items {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .timeline-items li {
-        margin-bottom: 0.55rem;
-      }
-      .timeline-items li:last-child {
-        margin-bottom: 0;
-      }
-      .timeline-items a {
-        color: var(--text-muted);
-        font-size: 0.82rem;
-        line-height: 1.5;
-      }
-      .timeline-items a:hover {
-        color: var(--accent);
-      }
-
-      .section {
-        margin-top: 3.2rem;
-        padding-top: 1.6rem;
-        border-top: 1px solid var(--border);
-      }
-      .section h2 {
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        margin-bottom: 1.6rem;
-      }
-      .count {
-        font-weight: 400;
-        text-transform: none;
-        letter-spacing: normal;
-      }
-
-      .card {
-        padding-bottom: 1.8rem;
-        margin-bottom: 1.8rem;
-        border-bottom: 1px solid var(--border);
-      }
-      .card:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-      }
-      .card-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-      }
-      .card-head h3 {
-        margin: 0;
-        font-size: 0.98rem;
-        font-weight: 600;
-        color: var(--text-heading);
-      }
-      .no {
-        color: var(--text-muted);
-        font-weight: 400;
-        margin-right: 0.3rem;
-      }
-      .period {
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        white-space: nowrap;
-      }
-      .role,
-      .tag-line {
-        color: var(--text-muted);
-        font-size: 0.87rem;
-        margin: 0.25rem 0 0.55rem;
-      }
-      .summary {
-        font-size: 0.89rem;
-        color: var(--text);
-        margin: 0.25rem 0 0.65rem;
-      }
-      .links {
-        display: flex;
-        gap: 0.8rem;
-        font-size: 0.82rem;
-        margin: 0.25rem 0 0.55rem;
-      }
-
-      .bullets {
-        margin: 0;
-        padding-left: 1.1rem;
-        font-size: 0.87rem;
-      }
-      .bullets li {
-        margin-bottom: 0.6rem;
-        color: var(--text);
-      }
-      .bullets li:last-child {
-        margin-bottom: 0;
-      }
-      .detail-link {
-        font-size: 0.78rem;
-        white-space: nowrap;
-      }
-
-      .oss-repo {
-        margin-bottom: 1.8rem;
-      }
-      .oss-repo:last-child {
-        margin-bottom: 0;
-      }
-      .oss-repo-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        border-bottom: 1px solid var(--border);
-        padding-bottom: 0.4rem;
-        margin-bottom: 0.6rem;
-      }
-      .oss-repo-head h3 {
-        font-size: 0.9rem;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        color: var(--text-heading);
-        margin: 0;
-      }
-      .oss-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .oss-list li {
-        padding: 0.7rem 0;
-        border-bottom: 1px dashed var(--border);
-      }
-      .oss-list li:last-child {
-        border-bottom: none;
-      }
-      .oss-title {
-        font-weight: 600;
-        font-size: 0.89rem;
-        margin: 0 0 0.25rem;
-        color: var(--text);
-      }
-      .oss-desc {
-        font-size: 0.84rem;
-        color: var(--text-muted);
-        margin: 0 0 0.4rem;
-      }
-
-      .site-footer {
-        max-width: var(--max-width);
-        margin: 4rem auto 0;
-        padding: 1.5rem 1.25rem 3rem;
-        border-top: 1px solid var(--border);
-        color: var(--text-muted);
-        font-size: 0.85rem;
-      }
-      .copyright {
-        margin-top: 0.4rem;
-        font-size: 0.78rem;
-      }
-
-      @media (max-width: 600px) {
-        .card-head {
-          flex-direction: column;
-          gap: 0.15rem;
-        }
-      }
-    </style>
-  </body>
-</html>
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .post-card {
+      display: block;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .post-card:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+    .post-cover {
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--tint);
+      border-bottom: 1px solid var(--border);
+    }
+    .post-cover span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .post-body {
+      padding: 1.1rem 1.2rem 1.3rem;
+    }
+    .post-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin: 0 0 0.5rem;
+    }
+    .post-body h2 {
+      font-size: 1rem;
+      line-height: 1.4;
+      margin: 0 0 0.5rem;
+      color: var(--text-heading);
+    }
+    .post-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .post-metric {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 0.7rem;
+    }
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .post-tags span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.1rem 0.55rem;
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,138 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "동시성 제어, 쿼리·인덱스 최적화, 오픈소스 기여를 해온 백엔드 개발자 심현민" } = Astro.props;
+const email = "shm66371945@gmail.com";
+const github = "https://github.com/stlahxm";
+---
+
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav>
+        <a href="/" class="brand">심현민</a>
+        <div class="nav-links">
+          <a href="/">글</a>
+          <a href="/about">소개</a>
+          <a href={github} target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </nav>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      <p>
+        <a href={`mailto:${email}`}>{email}</a>
+        <span class="dot">·</span>
+        <a href={github} target="_blank" rel="noreferrer">GitHub</a>
+      </p>
+      <p class="copyright">© 2026 심현민</p>
+    </footer>
+
+    <style is:global>
+      :root {
+        --bg: #ffffff;
+        --border: #e5e5e5;
+        --text: #1a1a1a;
+        --text-muted: #767676;
+        --text-heading: #111111;
+        --accent: #2563eb;
+        --tint: #f4f6fb;
+        --max-width: 640px;
+        --max-width-wide: 880px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0b0c;
+          --border: #262626;
+          --text: #e6e6e6;
+          --text-muted: #8a8a8a;
+          --text-heading: #ffffff;
+          --accent: #60a5fa;
+          --tint: #17181c;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+          "Segoe UI", sans-serif;
+        line-height: 1.65;
+        font-size: 15px;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .site-header {
+        border-bottom: 1px solid var(--border);
+      }
+      .site-header nav {
+        max-width: var(--max-width-wide);
+        margin: 0 auto;
+        padding: 1.1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .brand {
+        font-weight: 600;
+        color: var(--text-heading);
+      }
+      .nav-links {
+        display: flex;
+        gap: 1.1rem;
+        font-size: 0.85rem;
+      }
+      .nav-links a {
+        color: var(--text-muted);
+      }
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      .site-footer {
+        max-width: var(--max-width-wide);
+        margin: 4rem auto 0;
+        padding: 1.5rem 1.25rem 3rem;
+        border-top: 1px solid var(--border);
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+      .copyright {
+        margin-top: 0.4rem;
+        font-size: 0.78rem;
+      }
+      .dot {
+        margin: 0 0.4rem;
+      }
+    </style>
+  </body>
+</html>
