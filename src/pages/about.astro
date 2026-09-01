@@ -150,6 +150,14 @@ const activities = [
 // 첫 화면에서 전체 이력을 한눈에 보여주는 가로형 타임라인 — 연도별 큰 마일스톤만
 const timeline = [
   {
+    year: "2015",
+    items: [{ text: "중학교 입학", anchor: "#education" }],
+  },
+  {
+    year: "2018",
+    items: [{ text: "고등학교 입학", anchor: "#education" }],
+  },
+  {
     year: "2021",
     items: [{ text: "인하대학교 컴퓨터공학과 입학", anchor: "#education" }],
   },
@@ -225,15 +233,34 @@ const timeline = [
 
       <script>
         const timelineEl = document.querySelector<HTMLDivElement>(".timeline");
-        timelineEl?.addEventListener(
-          "wheel",
-          (e) => {
-            if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-            e.preventDefault();
-            timelineEl.scrollLeft += e.deltaY;
-          },
-          { passive: false },
-        );
+        if (timelineEl) {
+          let target = timelineEl.scrollLeft;
+          let raf = 0;
+
+          const step = () => {
+            const current = timelineEl.scrollLeft;
+            const diff = target - current;
+            if (Math.abs(diff) < 0.5) {
+              timelineEl.scrollLeft = target;
+              raf = 0;
+              return;
+            }
+            timelineEl.scrollLeft = current + diff * 0.18;
+            raf = requestAnimationFrame(step);
+          };
+
+          timelineEl.addEventListener(
+            "wheel",
+            (e) => {
+              if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+              e.preventDefault();
+              const max = timelineEl.scrollWidth - timelineEl.clientWidth;
+              target = Math.min(Math.max(target + e.deltaY, 0), max);
+              if (!raf) raf = requestAnimationFrame(step);
+            },
+            { passive: false },
+          );
+        }
       </script>
 
       <section id="career" class="section">
@@ -354,26 +381,27 @@ const timeline = [
 
     <style>
       main {
-        max-width: var(--max-width);
+        max-width: var(--max-width-wide);
         margin: 0 auto;
-        padding: 3.5rem 1.25rem 1rem;
+        padding: 3.5rem 2.5rem 1rem;
       }
 
       .hero h1 {
-        font-size: 1.9rem;
+        font-size: 2.4rem;
         font-weight: 700;
-        margin: 0 0 0.3rem;
+        margin: 0 0 0.4rem;
         color: var(--text-heading);
       }
       .hero-role {
         color: var(--text-muted);
-        font-size: 0.95rem;
-        margin: 0 0 1.1rem;
+        font-size: 1.05rem;
+        margin: 0 0 1.2rem;
       }
       .hero-desc {
         color: var(--text);
-        max-width: 58ch;
-        margin: 0 0 1.3rem;
+        font-size: 1rem;
+        max-width: 68ch;
+        margin: 0 0 1.4rem;
       }
       .tags {
         display: flex;
@@ -415,14 +443,14 @@ const timeline = [
       }
       .timeline-col {
         flex: 0 0 auto;
-        min-width: 150px;
+        min-width: 190px;
       }
       .timeline-year {
         display: block;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 1.2rem;
         color: var(--text-heading);
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.7rem;
       }
       .timeline-tick {
         display: block;
@@ -459,7 +487,11 @@ const timeline = [
         color: var(--accent);
       }
 
+      .hero {
+        max-width: 960px;
+      }
       .section {
+        max-width: 960px;
         margin-top: 3.2rem;
         padding-top: 1.6rem;
         border-top: 1px solid var(--border);

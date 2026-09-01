@@ -33,7 +33,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
       }
     </div>
 
-    <div class="post-grid" id="post-grid">
+    <div class="post-list" id="post-grid">
       {
         posts.map((post) => (
           <a
@@ -50,6 +50,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
                 {post.data.pubDate.toLocaleDateString("ko-KR", {
                   year: "numeric",
                   month: "2-digit",
+                  day: "2-digit",
                 })}
               </p>
               <h2>{post.data.title}</h2>
@@ -98,36 +99,37 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
 
   <style>
     main {
-      max-width: var(--max-width-wide);
+      width: 100%;
       margin: 0 auto;
-      padding: 3.5rem 1.25rem 1rem;
+      padding: 2.5rem 2.5rem 1.5rem;
     }
     .page-head h1 {
-      font-size: 1.6rem;
-      margin: 0 0 0.4rem;
+      font-size: 2.1rem;
+      margin: 0 0 0.5rem;
       color: var(--text-heading);
     }
     .page-head p {
+      font-size: 1.02rem;
       color: var(--text-muted);
-      margin: 0 0 2rem;
+      margin: 0 0 2.2rem;
     }
 
     .tag-filter {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-bottom: 2.2rem;
+      margin-bottom: 2.5rem;
       padding-bottom: 1.6rem;
       border-bottom: 1px solid var(--border);
     }
     .tag-chip {
       font: inherit;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       background: transparent;
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 0.3rem 0.8rem;
+      padding: 0.4rem 1rem;
       cursor: pointer;
     }
     .tag-chip:hover {
@@ -140,16 +142,17 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
       color: #fff;
     }
 
-    .post-grid {
+    .post-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 2rem;
     }
     .post-card {
-      display: block;
+      display: flex;
+      flex-direction: column;
       color: var(--text);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
     }
     .post-card:hover {
@@ -157,7 +160,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
       text-decoration: none;
     }
     .post-cover {
-      height: 110px;
+      height: 260px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -167,35 +170,35 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
     .post-cover span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-weight: 700;
-      font-size: 1.4rem;
+      font-size: 2.4rem;
       color: var(--text-muted);
       letter-spacing: 0.02em;
     }
     .post-body {
-      padding: 1.1rem 1.2rem 1.3rem;
+      padding: 1.4rem 1.5rem 1.6rem;
     }
     .post-meta {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      margin: 0 0 0.5rem;
+      margin: 0 0 0.6rem;
     }
     .post-body h2 {
-      font-size: 1rem;
+      font-size: 1.3rem;
       line-height: 1.4;
-      margin: 0 0 0.5rem;
+      margin: 0 0 0.6rem;
       color: var(--text-heading);
     }
     .post-desc {
-      font-size: 0.85rem;
+      font-size: 0.92rem;
       color: var(--text-muted);
-      margin: 0 0 0.6rem;
+      margin: 0 0 0.7rem;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
     .post-metric {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--accent);
       margin: 0 0 0.7rem;
@@ -203,14 +206,14 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
     .post-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.35rem;
+      gap: 0.4rem;
     }
     .post-tags span {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 0.1rem 0.55rem;
+      padding: 0.15rem 0.6rem;
     }
   </style>
 </BaseLayout>
