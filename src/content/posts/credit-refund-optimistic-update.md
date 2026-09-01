@@ -5,6 +5,7 @@ pubDate: 2026-05-02
 category: "프로젝트"
 tags: ["동시성", "비동기", "결제"]
 badge: "Credit"
+cover: "/covers/credit-refund-optimistic-update.png"
 ---
 
 ## 들어가며

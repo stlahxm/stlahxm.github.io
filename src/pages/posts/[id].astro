@@ -17,6 +17,7 @@ const { Content } = await render(post);
 <BaseLayout title={`${post.data.title} · 심현민`} description={post.data.description}>
   <main>
     <a class="back" href="/">← 글 목록</a>
+    {post.data.cover && <img class="cover" src={post.data.cover} alt="" />}
     <p class="post-meta">
       {post.data.category} ·{" "}
       {post.data.pubDate.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}
@@ -40,6 +41,15 @@ const { Content } = await render(post);
     .back {
       font-size: 0.85rem;
       color: var(--text-muted);
+    }
+    .cover {
+      display: block;
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin: 1.2rem 0 0;
     }
     .post-meta {
       font-size: 0.8rem;

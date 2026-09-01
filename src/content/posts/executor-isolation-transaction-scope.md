@@ -6,6 +6,7 @@ category: "경력"
 tags: ["동시성", "Spring", "트랜잭션", "커넥션풀"]
 metric: "p95 47.2s → 2.8s (93.9%↓), 처리량 3.4배↑"
 badge: "TX"
+cover: "/covers/executor-isolation-transaction-scope.webp"
 ---
 
 ## 들어가며

@@ -6,6 +6,7 @@ category: "프로젝트"
 tags: ["MySQL", "쿼리최적화", "N+1"]
 metric: "쿼리 수 고정 (400건 기준 881회→3회)"
 badge: "N+1"
+cover: "/covers/pagination-n-plus-1.jpeg"
 ---
 
 ## 문제 인식

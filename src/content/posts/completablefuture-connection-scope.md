@@ -6,6 +6,7 @@ category: "경력"
 tags: ["동시성", "Spring", "커넥션풀"]
 metric: "p95 응답 속도 7.2s → 363ms 단축"
 badge: "Async"
+cover: "/covers/completablefuture-connection-scope.png"
 ---
 
 ## 들어가며

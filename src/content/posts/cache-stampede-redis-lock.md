@@ -6,6 +6,7 @@ category: "프로젝트"
 tags: ["Redis", "캐싱", "동시성", "비용최적화"]
 metric: "캐시 적중률 21.6%, 월 100만+ 토큰 비용 방어"
 badge: "Lock"
+cover: "/covers/cache-stampede-redis-lock.jpg"
 ---
 
 ## 들어가며

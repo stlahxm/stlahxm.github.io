@@ -77,7 +77,11 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       featured && (
         <a class="featured-card" href={`/posts/${featured.id}/`}>
           <div class="featured-cover">
-            <span>{featured.data.badge}</span>
+            {featured.data.cover ? (
+              <img src={featured.data.cover} alt="" />
+            ) : (
+              <span>{featured.data.badge}</span>
+            )}
           </div>
           <div class="featured-body">
             <p class="featured-label">FEATURED POST</p>
@@ -121,7 +125,11 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
             data-tags={post.data.tags.join(",")}
           >
             <div class="post-cover">
-              <span>{post.data.badge}</span>
+              {post.data.cover ? (
+                <img src={post.data.cover} alt="" />
+              ) : (
+                <span>{post.data.badge}</span>
+              )}
             </div>
             <div class="post-body">
               <p class="post-meta">
@@ -327,6 +335,12 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       justify-content: center;
       background: var(--tint);
       border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .featured-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .featured-cover span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -433,6 +447,12 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       justify-content: center;
       background: var(--tint);
       border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .post-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .post-cover span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

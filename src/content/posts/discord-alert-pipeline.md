@@ -5,6 +5,7 @@ pubDate: 2026-04-25
 category: "프로젝트"
 tags: ["운영", "모니터링", "GCP"]
 badge: "Alert"
+cover: "/covers/discord-alert-pipeline.png"
 ---
 
 ## 들어가며

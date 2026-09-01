@@ -6,6 +6,7 @@ category: "경력"
 tags: ["MySQL", "인덱스", "동시성"]
 metric: "p95 8.86s→1.45s(83.6%↓), TPS 5.2배↑"
 badge: "Idx"
+cover: "/covers/composite-index-lock-scope.webp"
 ---
 
 ## 들어가며

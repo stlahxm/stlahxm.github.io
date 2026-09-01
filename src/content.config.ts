@@ -11,6 +11,7 @@ const posts = defineCollection({
     tags: z.array(z.string()),
     metric: z.string().optional(),
     badge: z.string(),
+    cover: z.string().optional(),
   }),
 });
 

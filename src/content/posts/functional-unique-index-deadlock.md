@@ -6,6 +6,7 @@ category: "경력"
 tags: ["MySQL", "동시성", "인덱스", "데드락"]
 metric: "500 VUs 부하 테스트, 데드락 0건"
 badge: "SQL"
+cover: "/covers/functional-unique-index-deadlock.webp"
 ---
 
 ## 들어가며

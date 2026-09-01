@@ -5,6 +5,7 @@ pubDate: 2026-05-15
 category: "경력"
 tags: ["Spring", "트랜잭션", "AOP"]
 badge: "AOP"
+cover: "/covers/aop-self-invocation-proxy.png"
 ---
 
 ## 들어가며
