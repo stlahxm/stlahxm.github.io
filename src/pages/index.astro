@@ -273,6 +273,9 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       color: var(--text-muted);
       font-weight: 600;
     }
+    .timeline-col.is-empty .timeline-tick {
+      width: 20px;
+    }
     .timeline-year {
       display: block;
       font-weight: 700;

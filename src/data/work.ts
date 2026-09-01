@@ -82,7 +82,6 @@ export const work: WorkEntity[] = [
       {
         title: "백엔드·AI 기능 전담 개발",
         desc: "상품 등록·거래·채팅 기능 구현과 가상 피팅 API 연동, Spring Data JPA/QueryDSL 도메인 모델링, AWS EC2 CI/CD 파이프라인 구성",
-        postSlug: "fitfit-backend-ai",
       },
     ],
   },
@@ -100,7 +99,6 @@ export const work: WorkEntity[] = [
       {
         title: "외부 API 장애 격리 + 병렬화",
         desc: "외부 API 실패 시 폴백값 반환과 지수 백오프 재시도로 장애를 격리하고, 순차 호출 병목을 스레드풀 병렬화로 해결",
-        postSlug: "ddangbogo-public-data-pipeline",
       },
     ],
   },
