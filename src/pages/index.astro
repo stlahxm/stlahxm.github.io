@@ -16,27 +16,28 @@ for (const post of posts) {
 const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
 
 // 첫 화면 상단에 보여줄 가로형 타임라인 — 연도별 큰 마일스톤만
-const timeline = [
-  { year: "2015", items: [{ text: "옥계동부중학교 입학", href: "/about#education" }] },
-  { year: "2018", items: [{ text: "오상고등학교 입학", href: "/about#education" }] },
-  { year: "2021", items: [{ text: "인하대학교 컴퓨터공학과 입학", href: "/about#education" }] },
-  {
-    year: "2025",
-    items: [
-      { text: "모릭(Mori-Q) 프로젝트 시작", href: "/about#projects" },
-      { text: "핏핏 — 탄소중립 INNOVATION ACADEMY 최우수상", href: "/about#activities" },
-    ],
-  },
-  {
-    year: "2026",
-    items: [
-      { text: "(주) 에듀템 웹개발팀 백엔드 인턴", href: "/about#career" },
-      { text: "redisson 등 오픈소스 기여 시작", href: "/about#opensource" },
-      { text: "땅보고 서비스 개발 전담", href: "/about#activities" },
-      { text: "llm-markdown-sanitizer 배포", href: "/about#projects" },
-    ],
-  },
-];
+const timelineEvents: Record<string, { text: string; href: string }[]> = {
+  "2015": [{ text: "옥계동부중학교 입학", href: "/about#education" }],
+  "2018": [{ text: "오상고등학교 입학", href: "/about#education" }],
+  "2021": [{ text: "인하대학교 컴퓨터공학과 입학", href: "/about#education" }],
+  "2025": [
+    { text: "모릭(Mori-Q) 프로젝트 시작", href: "/about#projects" },
+    { text: "핏핏 — 탄소중립 INNOVATION ACADEMY 최우수상", href: "/about#activities" },
+  ],
+  "2026": [
+    { text: "(주) 에듀템 웹개발팀 백엔드 인턴", href: "/about#career" },
+    { text: "redisson 등 오픈소스 기여 시작", href: "/about#opensource" },
+    { text: "땅보고 서비스 개발 전담", href: "/about#activities" },
+    { text: "llm-markdown-sanitizer 배포", href: "/about#projects" },
+  ],
+};
+
+const BIRTH_YEAR = 2002;
+const CURRENT_YEAR = new Date().getFullYear();
+const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) => {
+  const year = String(BIRTH_YEAR + i);
+  return { year, items: timelineEvents[year] ?? [] };
+});
 ---
 
 <BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
@@ -56,7 +57,7 @@ const timeline = [
       <div class="timeline">
         {
           timeline.map((col) => (
-            <div class="timeline-col">
+            <div class:list={["timeline-col", { "is-empty": col.items.length === 0 }]}>
               <span class="timeline-year">{col.year}</span>
               <span class="timeline-tick" />
               <ul class="timeline-items">
@@ -256,6 +257,13 @@ const timeline = [
     .timeline-col {
       flex: 0 0 auto;
       min-width: 190px;
+    }
+    .timeline-col.is-empty {
+      min-width: 64px;
+    }
+    .timeline-col.is-empty .timeline-year {
+      color: var(--text-muted);
+      font-weight: 600;
     }
     .timeline-year {
       display: block;
