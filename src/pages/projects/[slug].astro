@@ -14,7 +14,9 @@ const { entity } = Astro.props;
     <a class="back" href="/about">← 소개로</a>
 
     <header class="entity-header">
-      <div class="entity-logo">{entity.badge}</div>
+      <div class="entity-logo">
+        {entity.logo ? <img src={entity.logo} alt="" /> : entity.badge}
+      </div>
       <div>
         <p class="eyebrow">PROJECT {entity.no} · {entity.period}</p>
         <h1>{entity.name}</h1>
@@ -84,9 +86,16 @@ const { entity } = Astro.props;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-weight: 700;
       color: var(--text-muted);
+    }
+    .entity-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
     }
     .eyebrow {
       font-size: 0.78rem;

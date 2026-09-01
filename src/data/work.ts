@@ -11,6 +11,7 @@ export interface WorkEntity {
   slug: string;
   type: "경력" | "활동";
   badge: string;
+  logo?: string;
   name: string;
   role: string;
   period: string;
@@ -24,6 +25,7 @@ export const work: WorkEntity[] = [
     slug: "edutem",
     type: "경력",
     badge: "ET",
+    logo: "/logos/edutem.jpg",
     name: "(주) 에듀템 웹개발팀",
     role: "백엔드 인턴",
     period: "2026.03 – 2026.06",
@@ -70,6 +72,7 @@ export const work: WorkEntity[] = [
     slug: "fitfit",
     type: "활동",
     badge: "FF",
+    logo: "/logos/fitfit.png",
     name: "핏핏 (중고의류 판매 서비스)",
     role: "백엔드 · AI 기능 전담",
     period: "탄소중립 INNOVATION ACADEMY 최우수상 · 2025.12",
@@ -87,6 +90,7 @@ export const work: WorkEntity[] = [
     slug: "ddangbogo",
     type: "활동",
     badge: "DB",
+    logo: "/logos/ddangbogo.png",
     name: "땅보고 (공공데이터 활용 창업경진대회)",
     role: "서비스 개발 전담",
     period: "2026.07 ~ 현재",
