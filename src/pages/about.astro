@@ -147,37 +147,6 @@ const activities = [
   },
 ];
 
-// 첫 화면에서 전체 이력을 한눈에 보여주는 가로형 타임라인 — 연도별 큰 마일스톤만
-const timeline = [
-  {
-    year: "2015",
-    items: [{ text: "옥계동부중학교 입학", anchor: "#education" }],
-  },
-  {
-    year: "2018",
-    items: [{ text: "오상고등학교 입학", anchor: "#education" }],
-  },
-  {
-    year: "2021",
-    items: [{ text: "인하대학교 컴퓨터공학과 입학", anchor: "#education" }],
-  },
-  {
-    year: "2025",
-    items: [
-      { text: "모릭(Mori-Q) 프로젝트 시작", anchor: "#projects" },
-      { text: "핏핏 — 탄소중립 INNOVATION ACADEMY 최우수상", anchor: "#activities" },
-    ],
-  },
-  {
-    year: "2026",
-    items: [
-      { text: "(주) 에듀템 웹개발팀 백엔드 인턴", anchor: "#career" },
-      { text: "redisson 등 오픈소스 기여 시작", anchor: "#opensource" },
-      { text: "땅보고 서비스 개발 전담", anchor: "#activities" },
-      { text: "llm-markdown-sanitizer 배포", anchor: "#projects" },
-    ],
-  },
-];
 ---
 
 <BaseLayout
@@ -185,15 +154,28 @@ const timeline = [
   description="동시성 제어, 쿼리·인덱스 최적화, 오픈소스 기여를 해온 백엔드 개발자 심현민의 포트폴리오"
 >
     <main id="top">
-      <section class="hero">
-        <h1>심현민</h1>
-        <p class="hero-role">Java, Spring Boot 기반 백엔드 개발자</p>
-        <p class="hero-desc">
-          동시성 제어, 쿼리·인덱스 최적화, 스레드·자원 격리, 백그라운드
-          처리 구조 설계를 해왔고, redisson 등 오픈소스에도 기여하고
-          있습니다. 겉으로 드러나지 않는 문제의 원인을 코드와 실측
-          데이터로 끝까지 추적해 검증하는 것을 지향합니다.
-        </p>
+    <div class="resume-sheet">
+      <header class="resume-header">
+        <div class="resume-heading">
+          <h1>심현민</h1>
+          <p class="resume-title">백엔드 개발자</p>
+        </div>
+        <div class="resume-contact">
+          <p><a href={`mailto:${email}`}>{email}</a></p>
+          <p><a href={github} target="_blank" rel="noreferrer">GitHub</a></p>
+        </div>
+      </header>
+
+      <p class="resume-summary">
+        Java, Spring Boot 기반으로 AI 연동 시스템을 개발해온 백엔드
+        개발자입니다. 동시성 제어, 쿼리·인덱스 최적화, 스레드·자원 격리,
+        백그라운드 처리 구조 설계를 해왔고, redisson 등 오픈소스에도
+        기여하고 있습니다. 겉으로 드러나지 않는 문제의 원인을 코드와 실측
+        데이터로 끝까지 추적해 검증하는 것을 지향합니다.
+      </p>
+
+      <div class="resume-row">
+        <span class="resume-label">skills</span>
         <div class="tags">
           <span>Java (Spring Boot)</span>
           <span>JPA/Hibernate</span>
@@ -204,67 +186,11 @@ const timeline = [
           <span>AWS</span>
           <span>GCP</span>
         </div>
-        <p class="contact-line">
-          <a href={`mailto:${email}`}>{email}</a>
-          <span class="dot">·</span>
-          <a href={github} target="_blank" rel="noreferrer">GitHub</a>
-        </p>
-      </section>
+      </div>
 
-      <section class="timeline-section">
-        <div class="timeline">
-          {
-            timeline.map((col) => (
-              <div class="timeline-col">
-                <span class="timeline-year">{col.year}</span>
-                <span class="timeline-tick" />
-                <ul class="timeline-items">
-                  {col.items.map((item) => (
-                    <li>
-                      <a href={item.anchor}>{item.text}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))
-          }
-        </div>
-      </section>
-
-      <script>
-        const timelineEl = document.querySelector<HTMLDivElement>(".timeline");
-        if (timelineEl) {
-          let target = timelineEl.scrollLeft;
-          let raf = 0;
-
-          const step = () => {
-            const current = timelineEl.scrollLeft;
-            const diff = target - current;
-            if (Math.abs(diff) < 0.5) {
-              timelineEl.scrollLeft = target;
-              raf = 0;
-              return;
-            }
-            timelineEl.scrollLeft = current + diff * 0.18;
-            raf = requestAnimationFrame(step);
-          };
-
-          timelineEl.addEventListener(
-            "wheel",
-            (e) => {
-              if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-              e.preventDefault();
-              const max = timelineEl.scrollWidth - timelineEl.clientWidth;
-              target = Math.min(Math.max(target + e.deltaY, 0), max);
-              if (!raf) raf = requestAnimationFrame(step);
-            },
-            { passive: false },
-          );
-        }
-      </script>
-
-      <section id="career" class="section">
-        <h2>경력 <span class="count">({career.length} role)</span></h2>
+      <section id="career" class="resume-row">
+        <h2 class="resume-label">경력</h2>
+        <div class="resume-content">
         {
           career.map((job) => (
             <article class="card">
@@ -287,10 +213,12 @@ const timeline = [
             </article>
           ))
         }
+        </div>
       </section>
 
-      <section id="projects" class="section">
-        <h2>프로젝트 <span class="count">({projects.length} projects)</span></h2>
+      <section id="projects" class="resume-row">
+        <h2 class="resume-label">프로젝트</h2>
+        <div class="resume-content">
         {
           projects.map((p) => (
             <article class="card">
@@ -311,16 +239,12 @@ const timeline = [
             </article>
           ))
         }
+        </div>
       </section>
 
-      <section id="opensource" class="section">
-        <h2>
-          오픈소스{" "}
-          <span class="count">
-            ({openSource.length} repos ·{" "}
-            {openSource.reduce((sum, r) => sum + r.items.length, 0)} issues)
-          </span>
-        </h2>
+      <section id="opensource" class="resume-row">
+        <h2 class="resume-label">오픈소스</h2>
+        <div class="resume-content">
         {
           openSource.map((repo) => (
             <div class="oss-repo">
@@ -343,10 +267,12 @@ const timeline = [
             </div>
           ))
         }
+        </div>
       </section>
 
-      <section id="activities" class="section">
-        <h2>활동 <span class="count">({activities.length} projects)</span></h2>
+      <section id="activities" class="resume-row">
+        <h2 class="resume-label">활동</h2>
+        <div class="resume-content">
         {
           activities.map((a) => (
             <article class="card">
@@ -362,10 +288,12 @@ const timeline = [
             </article>
           ))
         }
+        </div>
       </section>
 
-      <section id="education" class="section">
-        <h2>학력</h2>
+      <section id="education" class="resume-row">
+        <h2 class="resume-label">학력</h2>
+        <div class="resume-content">
         <article class="card">
           <div class="card-head">
             <h3>인하대학교</h3>
@@ -376,38 +304,91 @@ const timeline = [
             즉시 근무 가능)
           </p>
         </article>
+        </div>
       </section>
+    </div>
     </main>
 
     <style>
       main {
         width: 100%;
         margin: 0 auto;
-        padding: 2.5rem 2.5rem 1.5rem;
+        padding: 2.5rem 2.5rem 4rem;
+        display: flex;
+        justify-content: center;
       }
 
-      .hero h1 {
-        font-size: 2.4rem;
+      .resume-sheet {
+        width: 100%;
+        max-width: 1300px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        padding: 3.5rem 4rem;
+      }
+
+      .resume-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding-bottom: 1.6rem;
+        border-bottom: 2px solid var(--text-heading);
+        margin-bottom: 1.6rem;
+      }
+      .resume-heading h1 {
+        font-size: 2rem;
         font-weight: 700;
-        margin: 0 0 0.4rem;
+        margin: 0 0 0.2rem;
         color: var(--text-heading);
+        letter-spacing: 0.02em;
       }
-      .hero-role {
+      .resume-title {
+        margin: 0;
         color: var(--text-muted);
-        font-size: 1.05rem;
-        margin: 0 0 1.2rem;
+        font-size: 0.95rem;
       }
-      .hero-desc {
+      .resume-contact {
+        text-align: right;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+      .resume-contact p {
+        margin: 0.15rem 0;
+      }
+
+      .resume-summary {
+        font-size: 0.92rem;
         color: var(--text);
-        font-size: 1rem;
-        max-width: 68ch;
-        margin: 0 0 1.4rem;
+        max-width: 90ch;
+        margin: 0 0 1.8rem;
       }
+
+      .resume-row {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 1.5rem;
+        padding: 1.6rem 0;
+        border-top: 1px solid var(--border);
+      }
+      .resume-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin: 0;
+      }
+      .resume-content {
+        min-width: 0;
+      }
+
       .tags {
         display: flex;
         flex-wrap: wrap;
         gap: 0.4rem;
-        margin: 0 0 1.3rem;
       }
       .tags span {
         font-size: 0.76rem;
@@ -415,99 +396,6 @@ const timeline = [
         border: 1px solid var(--border);
         border-radius: 999px;
         padding: 0.15rem 0.65rem;
-      }
-      .contact-line {
-        color: var(--text-muted);
-        font-size: 0.88rem;
-      }
-      .dot {
-        margin: 0 0.4rem;
-      }
-
-      .timeline-section {
-        margin-top: 2.8rem;
-        padding-top: 1.8rem;
-        border-top: 1px solid var(--border);
-        max-width: 100vw;
-      }
-      .timeline {
-        display: flex;
-        gap: 2.4rem;
-        overflow-x: auto;
-        padding-bottom: 0.3rem;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-      .timeline::-webkit-scrollbar {
-        display: none;
-      }
-      .timeline-col {
-        flex: 0 0 auto;
-        min-width: 190px;
-      }
-      .timeline-year {
-        display: block;
-        font-weight: 700;
-        font-size: 1.2rem;
-        color: var(--text-heading);
-        margin-bottom: 0.7rem;
-      }
-      .timeline-tick {
-        display: block;
-        position: relative;
-        border-top: 1px dashed var(--border);
-        margin-bottom: 0.9rem;
-      }
-      .timeline-tick::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: -4px;
-        width: 1px;
-        height: 8px;
-        background: var(--text-muted);
-      }
-      .timeline-items {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-      .timeline-items li {
-        margin-bottom: 0.55rem;
-      }
-      .timeline-items li:last-child {
-        margin-bottom: 0;
-      }
-      .timeline-items a {
-        color: var(--text-muted);
-        font-size: 0.82rem;
-        line-height: 1.5;
-      }
-      .timeline-items a:hover {
-        color: var(--accent);
-      }
-
-      .hero {
-        max-width: 1300px;
-      }
-      .section {
-        max-width: 1300px;
-        margin-top: 3.2rem;
-        padding-top: 1.6rem;
-        border-top: 1px solid var(--border);
-      }
-      .section h2 {
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--text-muted);
-        margin-bottom: 1.6rem;
-      }
-      .count {
-        font-weight: 400;
-        text-transform: none;
-        letter-spacing: normal;
       }
 
       .card {
