@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
+        with:
+          node-version: 22
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
