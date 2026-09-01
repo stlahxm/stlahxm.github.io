@@ -50,7 +50,7 @@ def _deindent_bullets_after_table(lines: list[str]) -> list[str]:
 경계는 다음과 같이 나눴습니다.
 
 - **라이브러리가 책임지는 범용 정규화**: emphasis 경계 처리, 표 확장/복구, 리스트 들여쓰기의 CommonMark 스케일 정규화, 코드펜스 감싸기/닫힘 처리, 코드 내용 보호
-- **서비스에 남긴 도메인 전용 로직**: 위키 링크 표기, "교수님 설명" 포맷, 페이지 참조(`p.N`) 위치 정리처럼 모릭에만 있는 규칙
+- **서비스에 남긴 도메인 전용 로직**: 위키 링크 표기, 페이지 참조(`p.N`) 위치 정리처럼 모릭에만 있는 규칙
 
 ```python
 def clean_markdown_response(text) -> str:
