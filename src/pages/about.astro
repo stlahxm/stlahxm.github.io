@@ -1,62 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { work } from "../data/work";
+import { projects } from "../data/projects";
 
-// 심현민 소개(이력서 스타일) 페이지
-// 경력/프로젝트/오픈소스 항목의 "자세히 보기"는 /posts/[slug]로 연결.
+// 심현민 소개(이력서 스타일) 페이지 — 간단 요약만, 상세는 /work/[slug], /projects/[slug]로 연결.
 
 const email = "shm66371945@gmail.com";
 const github = "https://github.com/stlahxm";
 
-const career = [
-  {
-    company: "(주) 에듀템 웹개발팀",
-    role: "백엔드 인턴",
-    period: "2026.03 – 2026.06",
-    summary: "자사 서비스 핵심 API 리팩토링 및 성능 개선을 위한 백그라운드 처리 모듈 설계 참여",
-    bullets: [
-      { text: "외부 API를 순차 호출하며 응답 대기 중에도 커넥션을 붙잡던 구조로 인한 150 VUs 부하 테스트 전량 실패를, CompletableFuture로 호출을 병렬 실행하고 DB 커넥션 점유 시간을 분리해 해결, p95 응답 속도 7.2s → 363ms 단축" },
-      { text: "WHERE NOT EXISTS 조건부 삽입에 맞는 인덱스가 없어 풀 테이블 스캔·락 확산이 발생하던 문제를, 조회 조건 순서에 맞춘 복합 인덱스로 락 범위를 유저 단위로 좁혀 해결 → p95 8.86s→1.45s(83.6%↓), TPS 5.2배↑" },
-      { text: "WHERE NOT EXISTS 원자적 쿼리에서도 갭 락 경합으로 데드락이 빈발하던 문제를, 유니크 인덱스 기반으로 선조회 없이 즉시 insert 후 충돌 시에만 재조회하는 방식으로 전환해 해결, 500 VUs 부하 테스트로 데드락·중복 세션 생성 0건 확인", slug: "functional-unique-index-deadlock" },
-      { text: "오래 걸리는 API가 톰캣 공용 스레드를 소진시켜 로그인 등 핵심 API까지 마비되던 문제를, 오래 걸리는 API 전용 스레드 풀로 분리하고 풀 포화 시 대기 없이 즉시 거절하도록 해 해결, 과부하 중에도 핵심 API 지연 124ms 수준 방어", slug: "thread-pool-fail-fast" },
-      { text: "퀴즈 재생성(삭제 후 재삽입) 로직에서 같은 클래스 내 메서드 직접 호출로 트랜잭션 프록시를 거치지 못해, 삽입 실패 시 삭제까지 롤백되지 않고 퀴즈 테이블이 통째로 비던 문제를, 삭제·재삽입 로직을 별도 서비스 빈으로 분리해 프록시가 정상 적용되도록 해결" },
-      { text: "AI 응답 대기 중 톰캣 스레드와 DB 커넥션이 함께 점유돼 서비스 전체가 마비되던 문제를, AI 호출 전용 스레드풀 분리와 트랜잭션 범위를 DB 작업 구간만으로 좁혀 해결, p95 47.2s→2.8s(93.9%↓), 처리량 3.4배↑", slug: "executor-isolation-transaction-scope" },
-    ],
-  },
-];
-
-const projects = [
-  {
-    no: "01",
-    name: "모릭 (Mori-Q)",
-    period: "2025.09 ~",
-    tag: "대학생 AI 학습 생산성 플랫폼",
-    links: [{ label: "GitHub", href: "#" }, { label: "홈페이지", href: "#" }],
-    summary: "총 사용자 200+, MAU 100+ | 백엔드 아키텍처 설계 및 백그라운드 AI 분석 파이프라인 구축 주도",
-    bullets: [
-      "수백 페이지 문서 분석 같은 오래 걸리는 AI 연산을 요청 스레드가 직접 처리해 Cloud Run 타임아웃(60s)을 넘기면 504가 발생하던 구조를, API는 Redis 큐에 작업 등록만 하고 바로 응답하며 실제 처리는 별도 ARQ 워커가 백그라운드로 수행하도록 분리해 해결, 요청 처리 성공률 97.4% 달성",
-      "동일 강의자료 중복 업로드 시 분석 결과가 DB에 저장되기 전 캐시 공백(약 5분) 동안 AI API가 중복 호출되던 문제를, 먼저 온 요청만 Redis 락(SET NX EX)으로 처리하고 나머지는 30초 뒤 재시도하도록 큐에 다시 넣어(ARQ defer) 해결, 캐시 적중률 21.6%, 월 약 100만 토큰 이상의 중복 호출 비용 방어",
-      "자료 분석 실패·API 타임아웃이 낮은 빈도로 발생해 로그에 묻히며 사용자 제보 전까지 인지하지 못하던 문제를, 로그를 Pub/Sub→Cloud Function 거쳐 Discord로 실시간 전파하고 에러 원인 11종 자동 분류+3시간 주기 상태 리포트로 해결해 저빈도 에러까지 추적 가능한 운영 체계 확보",
-      "크레딧 차감이 AI 워커에서 비동기로 처리되며 생기는 지연 구간을 연타로 악용해 발생하던 마이너스 크레딧 문제를, 프론트에서 클릭 즉시 잔액을 먼저 차감하고 AI 워커 실패 시 환불 API를 호출해 되돌리는 방식으로 해결",
-      "퀴즈 이력 목록 조회 API의 전체 이력 무제한 로드와 N+1 반복 쿼리를, 페이지 조회와 IN절 일괄조회로 전환해 해결, 쿼리 수를 이력 누적량과 무관하게 고정(400건 기준 881회→3회)",
-    ],
-  },
-  {
-    no: "02",
-    name: "llm-markdown-sanitizer",
-    period: "2026.08 ~",
-    tag: "PyPI 3600+ 다운로드 오픈소스 라이브러리",
-    links: [
-      { label: "GitHub", href: "#" },
-      { label: "PyPI", href: "#" },
-      { label: "JitPack", href: "#" },
-    ],
-    summary: "LLM이 생성한 마크다운에서 실제로 발생하는 오류를 정제하는 라이브러리",
-    bullets: [
-      "모릭 프로젝트에서 겪은 문제를 계기로, 여러 커뮤니티와 주요 LLM 도구 이슈 트래커에서 흔히 보고되는 마크다운 깨짐 유형을 분류해 정제하는 라이브러리로 일반화",
-      "Python(PyPI), Java(JitPack) 두 언어로 지원해 모릭 실서버 파이프라인에 배포, 실제 응답의 20% 이상에서 마크다운 오류를 자동 탐지·정제",
-    ],
-  },
-];
+const career = work.filter((w) => w.type === "경력");
+const activities = work.filter((w) => w.type === "활동");
 
 const openSource = [
   {
@@ -126,27 +79,6 @@ const openSource = [
     ],
   },
 ];
-
-const activities = [
-  {
-    title: "핏핏 — 중고의류 판매 서비스",
-    period: "탄소중립 INNOVATION ACADEMY 최우수상 · 2025.12",
-    bullets: [
-      "백엔드와 AI 기능을 전담해 상품 등록·거래·판매자-구매자 채팅 기능을 구현하고, 가상 피팅 API를 연동",
-      "Spring Data JPA/QueryDSL로 도메인 모델링, GitHub Actions 기반 AWS EC2 CI/CD 배포 파이프라인 구성",
-    ],
-  },
-  {
-    title: "땅보고 — 공공데이터 활용 창업경진대회 출품작",
-    period: "서비스 개발 전담 · 2026.07 ~ 현재",
-    bullets: [
-      "국토교통부, 한국농어촌공사 등 다종의 공공데이터 오픈 API를 연동하여 농지 위험 요인 수집 파이프라인 구축",
-      "외부 API 실패 시 예외를 전파하지 않고 일관된 폴백값을 반환하도록 설계, 일시적 오류는 지수 백오프 재시도로 방어",
-      "150 VUs로 6개 분석 항목의 순차 호출 병목을 확인하고 스레드풀 병렬화로 p95 응답 32.8% 단축, 처리량 1.6배 향상",
-    ],
-  },
-];
-
 ---
 
 <BaseLayout
@@ -193,24 +125,15 @@ const activities = [
         <div class="resume-content">
         {
           career.map((job) => (
-            <article class="card">
-              <div class="card-head">
-                <h3>{job.company}</h3>
-                <span class="period">{job.period}</span>
-              </div>
-              <p class="role">{job.role}</p>
-              <p class="summary">{job.summary}</p>
-              <ul class="bullets">
-                {job.bullets.map((b) => (
-                  <li>
-                    {b.text}{" "}
-                    {b.slug && (
-                      <a class="detail-link" href={`/posts/${b.slug}/`}>자세히 보기 ↗</a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </article>
+            <a class="entity-row" href={`/work/${job.slug}/`}>
+              <span class="entity-logo">{job.badge}</span>
+              <span class="entity-main">
+                <span class="entity-name">{job.name}</span>
+                <span class="entity-sub">{job.role}</span>
+              </span>
+              <span class="period">{job.period}</span>
+              <span class="entity-arrow">↗</span>
+            </a>
           ))
         }
         </div>
@@ -221,22 +144,15 @@ const activities = [
         <div class="resume-content">
         {
           projects.map((p) => (
-            <article class="card">
-              <div class="card-head">
-                <h3><span class="no">{p.no}</span> {p.name}</h3>
-                <span class="period">{p.period}</span>
-              </div>
-              <p class="tag-line">{p.tag}</p>
-              <div class="links">
-                {p.links.map((l) => (
-                  <a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>
-                ))}
-              </div>
-              <p class="summary">{p.summary}</p>
-              <ul class="bullets">
-                {p.bullets.map((b) => <li>{b}</li>)}
-              </ul>
-            </article>
+            <a class="entity-row" href={`/projects/${p.slug}/`}>
+              <span class="entity-logo">{p.badge}</span>
+              <span class="entity-main">
+                <span class="entity-name"><span class="no">{p.no}</span> {p.name}</span>
+                <span class="entity-sub">{p.tag}</span>
+              </span>
+              <span class="period">{p.period}</span>
+              <span class="entity-arrow">↗</span>
+            </a>
           ))
         }
         </div>
@@ -275,17 +191,15 @@ const activities = [
         <div class="resume-content">
         {
           activities.map((a) => (
-            <article class="card">
-              <div class="card-head">
-                <h3>{a.title}</h3>
-              </div>
-              <p class="period">{a.period}</p>
-              <ul class="bullets">
-                {a.bullets.map((b) => (
-                  <li>{b}</li>
-                ))}
-              </ul>
-            </article>
+            <a class="entity-row" href={`/work/${a.slug}/`}>
+              <span class="entity-logo">{a.badge}</span>
+              <span class="entity-main">
+                <span class="entity-name">{a.name}</span>
+                <span class="entity-sub">{a.role}</span>
+              </span>
+              <span class="period">{a.period}</span>
+              <span class="entity-arrow">↗</span>
+            </a>
           ))
         }
         </div>
@@ -431,12 +345,6 @@ const activities = [
         font-size: 0.8rem;
         white-space: nowrap;
       }
-      .role,
-      .tag-line {
-        color: var(--text-muted);
-        font-size: 0.87rem;
-        margin: 0.25rem 0 0.55rem;
-      }
       .summary {
         font-size: 0.89rem;
         color: var(--text);
@@ -449,22 +357,54 @@ const activities = [
         margin: 0.25rem 0 0.55rem;
       }
 
-      .bullets {
-        max-width: 90ch;
-        margin: 0;
-        padding-left: 1.1rem;
-        font-size: 0.87rem;
-      }
-      .bullets li {
-        margin-bottom: 0.6rem;
+      .entity-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--border);
         color: var(--text);
       }
-      .bullets li:last-child {
-        margin-bottom: 0;
+      .entity-row:last-child {
+        border-bottom: none;
       }
-      .detail-link {
-        font-size: 0.78rem;
-        white-space: nowrap;
+      .entity-row:hover {
+        text-decoration: none;
+      }
+      .entity-row:hover .entity-name {
+        color: var(--accent);
+      }
+      .entity-logo {
+        flex: 0 0 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--tint);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .entity-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .entity-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-heading);
+      }
+      .entity-sub {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+      }
+      .entity-arrow {
+        color: var(--text-muted);
       }
 
       .oss-repo {

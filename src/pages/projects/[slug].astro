@@ -1,0 +1,191 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projects } from "../../data/projects";
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { entity: p } }));
+}
+
+const { entity } = Astro.props;
+---
+
+<BaseLayout title={`${entity.name} · 심현민`} description={entity.summary}>
+  <main>
+    <a class="back" href="/about">← 소개로</a>
+
+    <header class="entity-header">
+      <div class="entity-logo">{entity.badge}</div>
+      <div>
+        <p class="eyebrow">PROJECT {entity.no} · {entity.period}</p>
+        <h1>{entity.name}</h1>
+        <p class="role">{entity.tag}</p>
+      </div>
+    </header>
+
+    <p class="summary">{entity.summary}</p>
+
+    <div class="links">
+      {entity.links.map((l) => <a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}
+    </div>
+
+    <div class="metrics">
+      {
+        entity.metrics.map((m) => (
+          <div class="metric">
+            <p class="metric-value">{m.value}</p>
+            <p class="metric-label">{m.label}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <section class="contributions">
+      <h2>주요 기여</h2>
+      <ul>
+        {
+          entity.contributions.map((c) => (
+            <li>
+              <div>
+                <p class="c-title">{c.title}</p>
+                <p class="c-desc">{c.desc}</p>
+              </div>
+              {c.postSlug && (
+                <a class="c-link" href={`/posts/${c.postSlug}/`}>관련 글 →</a>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+
+  <style>
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    .back {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .entity-header {
+      display: flex;
+      align-items: center;
+      gap: 1.3rem;
+      margin: 1.6rem 0 1.2rem;
+    }
+    .entity-logo {
+      flex: 0 0 64px;
+      height: 64px;
+      border-radius: 14px;
+      background: var(--tint);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .eyebrow {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0 0 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin: 0 0 0.2rem;
+      color: var(--text-heading);
+    }
+    .role {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    .summary {
+      font-size: 0.95rem;
+      color: var(--text);
+      max-width: 80ch;
+      margin: 0 0 1rem;
+    }
+    .links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.87rem;
+      margin-bottom: 2rem;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+      padding: 1.8rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+    .metric-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 0.3rem;
+    }
+    .metric-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .contributions h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.2rem;
+    }
+    .contributions ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .contributions li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1.5rem;
+      padding: 1.3rem 0;
+      border-top: 1px solid var(--border);
+    }
+    .contributions li:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+    .c-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-heading);
+      margin: 0 0 0.35rem;
+    }
+    .c-desc {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      margin: 0;
+      max-width: 65ch;
+    }
+    .c-link {
+      flex: 0 0 auto;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      .contributions li {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</BaseLayout>
