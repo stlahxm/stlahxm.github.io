@@ -1,0 +1,146 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { openSource } from "../../data/opensource";
+
+const totalIssues = openSource.reduce((sum, r) => sum + r.items.length, 0);
+---
+
+<BaseLayout
+  title="오픈소스 기여 · 심현민"
+  description="redisson, ShedLock, langchain4j 등 오픈소스에 기여한 이슈·PR 기록"
+>
+  <main>
+    <a class="back" href="/about">← 소개로</a>
+
+    <header class="page-header">
+      <p class="eyebrow">OPEN SOURCE · {openSource.length} repos · {totalIssues} issues</p>
+      <h1>오픈소스 기여</h1>
+      <p class="summary">
+        제가 작성하지 않은 코드에서도 근본 원인을 끝까지 추적하는 걸 좋아합니다.
+        아래는 실제로 이슈를 리포트하거나 PR을 제출한 기록입니다.
+      </p>
+    </header>
+
+    <img class="banner" src="/images/opensource-pr.gif" alt="오픈소스 PR 기록" />
+
+    <div class="repos">
+      {
+        openSource.map((repo) => (
+          <section class="repo">
+            <div class="repo-head">
+              <h2>{repo.repo}</h2>
+              <span class="count">{repo.count}</span>
+            </div>
+            <ul>
+              {repo.items.map((item) => (
+                <li>
+                  <p class="item-title">{item.title}</p>
+                  <p class="item-desc">{item.desc}</p>
+                  <div class="links">
+                    <a href={item.issue} target="_blank" rel="noreferrer">이슈 ↗</a>
+                    <a href={item.pr} target="_blank" rel="noreferrer">PR ↗</a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+
+  <style>
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    .back {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .page-header {
+      margin: 1.6rem 0 2rem;
+    }
+    .eyebrow {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0 0 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    h1 {
+      font-size: 1.7rem;
+      margin: 0 0 0.7rem;
+      color: var(--text-heading);
+    }
+    .summary {
+      font-size: 0.95rem;
+      color: var(--text);
+      max-width: 70ch;
+      margin: 0;
+    }
+
+    .banner {
+      display: block;
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+
+    .repo {
+      margin-bottom: 2.5rem;
+    }
+    .repo:last-child {
+      margin-bottom: 0;
+    }
+    .repo-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .repo-head h2 {
+      font-size: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--text-heading);
+      margin: 0;
+    }
+    .count {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .repo ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .repo li {
+      padding: 1rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .repo li:last-child {
+      border-bottom: none;
+    }
+    .item-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--text);
+      margin: 0 0 0.3rem;
+    }
+    .item-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin: 0 0 0.5rem;
+      max-width: 70ch;
+    }
+    .links {
+      display: flex;
+      gap: 0.8rem;
+      font-size: 0.82rem;
+    }
+  </style>
+</BaseLayout>
