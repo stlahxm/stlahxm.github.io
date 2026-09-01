@@ -25,7 +25,7 @@ export const work: WorkEntity[] = [
     slug: "edutem",
     type: "경력",
     badge: "ET",
-    logo: "/logos/edutem.jpg",
+    logo: "/logos/edutem-icon.png",
     name: "(주) 에듀템 웹개발팀",
     role: "백엔드 인턴",
     period: "2026.03 – 2026.06",
