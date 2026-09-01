@@ -90,7 +90,7 @@ export const work: WorkEntity[] = [
     slug: "ddangbogo",
     type: "활동",
     badge: "DB",
-    logo: "/logos/ddangbogo.png",
+    logo: "/logos/ddangbogo-banner.png",
     name: "땅보고 (공공데이터 활용 창업경진대회)",
     role: "서비스 개발 전담",
     period: "2026.07 ~ 현재",

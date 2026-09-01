@@ -26,7 +26,7 @@ export const projects: ProjectEntity[] = [
     slug: "mori-q",
     no: "01",
     badge: "MQ",
-    logo: "/logos/mori-q.png",
+    logo: "/logos/mori-q-banner.png",
     name: "모릭 (Mori-Q)",
     period: "2025.09 ~",
     tag: "대학생 AI 학습 생산성 플랫폼",
