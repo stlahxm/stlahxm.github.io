@@ -7,6 +7,7 @@ tags: ["동시성", "Spring", "Tomcat", "장애격리"]
 metric: "핵심 API 지연 124ms 수준 방어"
 badge: "Thread"
 cover: "/covers/thread-pool-fail-fast.png"
+coverFit: "logo"
 ---
 
 ## 들어가며

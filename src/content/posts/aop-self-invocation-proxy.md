@@ -6,6 +6,7 @@ category: "경력"
 tags: ["Spring", "트랜잭션", "AOP"]
 badge: "AOP"
 cover: "/covers/aop-self-invocation-proxy.png"
+coverFit: "logo"
 ---
 
 ## 들어가며

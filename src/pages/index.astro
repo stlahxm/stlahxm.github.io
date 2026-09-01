@@ -76,7 +76,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
     {
       featured && (
         <a class="featured-card" href={`/posts/${featured.id}/`}>
-          <div class="featured-cover">
+          <div class:list={["featured-cover", { "is-logo": featured.data.coverFit === "logo" }]}>
             {featured.data.cover ? (
               <img src={featured.data.cover} alt="" />
             ) : (
@@ -124,7 +124,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
             href={`/posts/${post.id}/`}
             data-tags={post.data.tags.join(",")}
           >
-            <div class="post-cover">
+            <div class:list={["post-cover", { "is-logo": post.data.coverFit === "logo" }]}>
               {post.data.cover ? (
                 <img src={post.data.cover} alt="" />
               ) : (
@@ -340,10 +340,17 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       border-right: 1px solid var(--border);
       overflow: hidden;
     }
+    .featured-cover.is-logo {
+      background: #ffffff;
+    }
     .featured-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    .featured-cover.is-logo img {
+      object-fit: contain;
+      padding: 48px;
     }
     .featured-cover span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -452,10 +459,17 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       border-bottom: 1px solid var(--border);
       overflow: hidden;
     }
+    .post-cover.is-logo {
+      background: #ffffff;
+    }
     .post-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+    .post-cover.is-logo img {
+      object-fit: contain;
+      padding: 32px;
     }
     .post-cover span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

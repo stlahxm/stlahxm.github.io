@@ -7,6 +7,7 @@ tags: ["Redis", "비동기", "GCP", "아키텍처"]
 metric: "요청 처리 성공률 97.4% 달성"
 badge: "ARQ"
 cover: "/covers/redis-arq-background-worker.png"
+coverFit: "logo"
 ---
 
 ## 들어가며

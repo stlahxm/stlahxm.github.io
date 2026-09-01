@@ -6,6 +6,7 @@ category: "프로젝트"
 tags: ["운영", "모니터링", "GCP"]
 badge: "Alert"
 cover: "/covers/discord-alert-pipeline.png"
+coverFit: "logo"
 ---
 
 ## 들어가며

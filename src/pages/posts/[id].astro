@@ -17,7 +17,13 @@ const { Content } = await render(post);
 <BaseLayout title={`${post.data.title} · 심현민`} description={post.data.description}>
   <main>
     <a class="back" href="/">← 글 목록</a>
-    {post.data.cover && <img class="cover" src={post.data.cover} alt="" />}
+    {post.data.cover && (
+      <img
+        class:list={["cover", { "is-logo": post.data.coverFit === "logo" }]}
+        src={post.data.cover}
+        alt=""
+      />
+    )}
     <p class="post-meta">
       {post.data.category} ·{" "}
       {post.data.pubDate.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}
@@ -50,6 +56,12 @@ const { Content } = await render(post);
       border-radius: 14px;
       border: 1px solid var(--border);
       margin: 1.2rem 0 0;
+    }
+    .cover.is-logo {
+      background: #ffffff;
+      object-fit: contain;
+      padding: 40px;
+      box-sizing: border-box;
     }
     .post-meta {
       font-size: 0.8rem;
@@ -89,10 +101,27 @@ const { Content } = await render(post);
       line-height: 1.8;
       color: var(--text);
     }
+    .prose :global(h1) {
+      font-size: 1.3rem;
+      color: var(--text-heading);
+      margin: 2.4rem 0 0.9rem;
+    }
     .prose :global(h2) {
       font-size: 1.05rem;
       color: var(--text-heading);
       margin: 2.2rem 0 0.8rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid var(--border);
+    }
+    .prose :global(h2:first-child) {
+      padding-top: 0;
+      border-top: none;
+      margin-top: 0;
+    }
+    .prose :global(h3) {
+      font-size: 0.98rem;
+      color: var(--text-heading);
+      margin: 1.6rem 0 0.7rem;
     }
     .prose :global(p) {
       margin: 0 0 1rem;
@@ -105,15 +134,81 @@ const { Content } = await render(post);
     .prose :global(li) {
       margin-bottom: 0.4rem;
     }
+    .prose :global(li > ul),
+    .prose :global(li > ol) {
+      margin-top: 0.4rem;
+    }
     .prose :global(strong) {
       color: var(--text-heading);
     }
+    .prose :global(a) {
+      color: var(--accent);
+    }
+    .prose :global(hr) {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+    .prose :global(blockquote) {
+      margin: 0 0 1rem;
+      padding: 0.2rem 0 0.2rem 1rem;
+      border-left: 3px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* 인라인 코드 */
     .prose :global(code) {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.85em;
       background: var(--tint);
       padding: 0.1em 0.35em;
       border-radius: 4px;
+    }
+    /* 코드 블록 — 인라인 code 스타일을 상쇄하고 별도 스타일 적용 */
+    .prose :global(pre) {
+      background: var(--tint);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 0 0 1.2rem;
+      overflow-x: auto;
+      font-size: 0.85em;
+      line-height: 1.6;
+    }
+    .prose :global(pre code) {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      font-size: 1em;
+    }
+
+    /* 표 */
+    .prose :global(table) {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 1.4rem;
+      font-size: 0.88em;
+    }
+    .prose :global(th),
+    .prose :global(td) {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.8rem;
+      text-align: left;
+    }
+    .prose :global(th) {
+      background: var(--tint);
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+
+    /* mermaid 등 다이어그램 코드 블록은 그대로 코드로 표시 */
+    .prose :global(.mermaid) {
+      background: var(--tint);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0 0 1.2rem;
     }
   </style>
 </BaseLayout>

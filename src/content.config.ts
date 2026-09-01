@@ -12,6 +12,7 @@ const posts = defineCollection({
     metric: z.string().optional(),
     badge: z.string(),
     cover: z.string().optional(),
+    coverFit: z.enum(["photo", "logo"]).optional(),
   }),
 });
 

@@ -6,6 +6,7 @@ category: "프로젝트"
 tags: ["동시성", "비동기", "결제"]
 badge: "Credit"
 cover: "/covers/credit-refund-optimistic-update.png"
+coverFit: "logo"
 ---
 
 ## 들어가며
