@@ -6,7 +6,7 @@ category: "프로젝트"
 tags: ["오픈소스", "Python", "Java"]
 metric: "PyPI 3600+ 다운로드, 응답 20%+ 마크다운 오류 정제"
 badge: "MD"
-cover: "/covers/llm-markdown-sanitizer.png"
+cover: "/covers/llm-markdown-sanitizer.svg"
 ---
 
 ## 들어가며
