@@ -8,6 +8,7 @@ import { openSource } from "../data/opensource";
 
 const email = "shm66371945@gmail.com";
 const github = "https://github.com/stlahxm";
+const linkedin = "https://www.linkedin.com/in/simhyeonmin/";
 
 const career = work.filter((w) => w.type === "경력");
 const activities = work.filter((w) => w.type === "활동");
@@ -24,10 +25,6 @@ const activities = work.filter((w) => w.type === "활동");
         <div class="resume-heading">
           <h1>심현민</h1>
           <p class="resume-title">Backend Engineer</p>
-        </div>
-        <div class="resume-contact">
-          <p><a href={`mailto:${email}`}>{email}</a></p>
-          <p><a href={github} target="_blank" rel="noreferrer">GitHub</a></p>
         </div>
       </header>
 
@@ -211,6 +208,17 @@ const activities = work.filter((w) => w.type === "활동");
         </article>
         </div>
       </section>
+
+      <section id="contact" class="resume-row">
+        <h2 class="resume-label">Contact</h2>
+        <div class="resume-content">
+          <div class="contact-links">
+            <a href={`mailto:${email}`}>{email}</a>
+            <a href={github} target="_blank" rel="noreferrer">GitHub</a>
+            <a href={linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+          </div>
+        </div>
+      </section>
     </div>
     </main>
 
@@ -251,13 +259,11 @@ const activities = work.filter((w) => w.type === "활동");
         color: var(--text-muted);
         font-size: 0.95rem;
       }
-      .resume-contact {
-        text-align: right;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-      }
-      .resume-contact p {
-        margin: 0.15rem 0;
+      .contact-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        font-size: 0.9rem;
       }
 
       .resume-summary {
