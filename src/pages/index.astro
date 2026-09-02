@@ -1,11 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { work } from "../data/work";
+import { projects } from "../data/projects";
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-const [featured, ...rest] = posts;
+
+// 목록 카드에 "경력"/"프로젝트" 대신 실제 소속(모릭, 에듀템 인턴 등)을 보여주기 위한
+// postSlug -> 표시명 매핑. work는 회사명+역할, projects는 프로젝트명을 그대로 사용.
+const postEntityLabel = new Map<string, string>();
+for (const w of work) {
+  const shortName = w.name.replace(/^\(주\)\s*/, "").split(/[ (]/)[0];
+  for (const c of w.contributions) {
+    if (c.postSlug) postEntityLabel.set(c.postSlug, `${shortName} ${w.role.replace(/^.*·\s*/, "").replace(/^백엔드\s*/, "")}`.trim());
+  }
+}
+for (const p of projects) {
+  const shortName = p.name.split(" (")[0];
+  for (const c of p.contributions) {
+    if (c.postSlug) postEntityLabel.set(c.postSlug, shortName);
+  }
+}
 
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
@@ -78,36 +95,12 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       </div>
     </section>
 
-    {
-      featured && (
-        <a class="featured-card" href={`/posts/${featured.id}/`}>
-          <div class:list={["featured-cover", { "is-logo": featured.data.coverFit === "logo" }]}>
-            {featured.data.cover ? (
-              <img src={featured.data.cover} alt="" />
-            ) : (
-              <span>{featured.data.badge}</span>
-            )}
-          </div>
-          <div class="featured-body">
-            <p class="featured-label">FEATURED POST</p>
-            <p class="post-meta">
-              {featured.data.category} ·{" "}
-              {featured.data.pubDate.toLocaleDateString("ko-KR", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              })}
-            </p>
-            <h2>{featured.data.title}</h2>
-            <p class="post-desc">{featured.data.description}</p>
-            {featured.data.metric && <p class="post-metric">{featured.data.metric}</p>}
-          </div>
-        </a>
-      )
-    }
-
     <section class="page-head">
       <h2>전체 글 <span class="count">({posts.length})</span></h2>
+      <div class="sort-toggle" id="sort-toggle">
+        <button class="sort-btn active" data-sort="newest">최신순</button>
+        <button class="sort-btn" data-sort="oldest">오래된순</button>
+      </div>
     </section>
 
     <div class="tag-filter" id="tag-filter">
@@ -123,11 +116,12 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
 
     <div class="post-list" id="post-grid">
       {
-        rest.map((post) => (
+        posts.map((post) => (
           <a
             class="post-card"
             href={`/posts/${post.id}/`}
             data-tags={post.data.tags.join(",")}
+            data-pubdate={post.data.pubDate.valueOf()}
           >
             <div class:list={["post-cover", { "is-logo": post.data.coverFit === "logo" }]}>
               {post.data.cover ? (
@@ -138,7 +132,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
             </div>
             <div class="post-body">
               <p class="post-meta">
-                {post.data.category} ·{" "}
+                {postEntityLabel.get(post.id) ?? post.data.category} ·{" "}
                 {post.data.pubDate.toLocaleDateString("ko-KR", {
                   year: "numeric",
                   month: "2-digit",
@@ -190,6 +184,26 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
         { passive: false },
       );
     }
+
+    const sortEl = document.getElementById("sort-toggle");
+    const gridForSort = document.getElementById("post-grid");
+
+    sortEl?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".sort-btn");
+      if (!btn || !gridForSort) return;
+      const order = btn.dataset.sort;
+
+      sortEl.querySelectorAll<HTMLButtonElement>(".sort-btn").forEach((el) => {
+        el.classList.toggle("active", el === btn);
+      });
+
+      const cards = [...gridForSort.querySelectorAll<HTMLAnchorElement>(".post-card")];
+      cards.sort((a, b) => {
+        const diff = Number(a.dataset.pubdate) - Number(b.dataset.pubdate);
+        return order === "oldest" ? diff : -diff;
+      });
+      cards.forEach((card) => gridForSort.appendChild(card));
+    });
 
     const filterEl = document.getElementById("tag-filter");
     const gridEl = document.getElementById("post-grid");
@@ -354,91 +368,44 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       color: var(--accent);
     }
 
-    .featured-card {
+    .page-head {
       display: flex;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 3rem;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
     }
-    .featured-card:hover {
-      border-color: var(--accent);
-      text-decoration: none;
-    }
-    .featured-cover {
-      flex: 0 0 46%;
-      min-height: 320px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--tint);
-      border-right: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .featured-cover.is-logo {
-      background: #ffffff;
-    }
-    .featured-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .featured-cover.is-logo img {
-      object-fit: contain;
-      padding: 48px;
-    }
-    .featured-cover span {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-weight: 700;
-      font-size: 3.2rem;
-      color: var(--text-muted);
-    }
-    .featured-body {
-      flex: 1;
-      min-width: 0;
-      padding: 2.4rem 2.6rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .featured-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      margin: 0 0 0.8rem;
-    }
-    .featured-body h2 {
-      font-size: 1.7rem;
-      line-height: 1.4;
-      margin: 0.3rem 0 0.7rem;
-      color: var(--text-heading);
-    }
-    .featured-body .post-desc {
-      font-size: 1rem;
-      -webkit-line-clamp: 3;
-    }
-
     .page-head h2 {
       font-size: 1.3rem;
-      margin: 0 0 1.2rem;
+      margin: 0;
       color: var(--text-heading);
     }
     .page-head .count {
       font-weight: 400;
       color: var(--text-muted);
     }
-
-    @media (max-width: 720px) {
-      .featured-card {
-        flex-direction: column;
-      }
-      .featured-cover {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        min-height: 200px;
-      }
+    .sort-toggle {
+      display: flex;
+      gap: 0.3rem;
+    }
+    .sort-btn {
+      font: inherit;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+    }
+    .sort-btn:hover {
+      color: var(--accent);
+    }
+    .sort-btn.active {
+      color: var(--text-heading);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
 
     .tag-filter {
@@ -532,10 +499,9 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       font-size: 0.92rem;
       color: var(--text-muted);
       margin: 0 0 0.7rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
     }
     .post-metric {
       font-size: 0.8rem;
