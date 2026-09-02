@@ -44,18 +44,18 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
   <main>
     <section class="intro">
       <p class="intro-eyebrow">심현민 · backend</p>
+      <div class="tags">
+        <span>동시성 제어</span>
+        <span>쿼리·인덱스 최적화</span>
+        <span>스레드·자원 격리</span>
+        <span>오픈소스 기여</span>
+      </div>
       <h1>
-        겉으로 드러나지 않는 <mark>동시성·성능 문제</mark>를<br />
+        겉으로 드러나지 않는 <mark>병목</mark>을<br />
         코드와 실측 데이터로 <mark>끝까지</mark> 추적하는<br />
         백엔드 개발자입니다.
       </h1>
       <p class="intro-desc">Java·Spring Boot 기반으로 AI 연동 시스템을 개발하며, 락 범위·쿼리 실행 계획·스레드 자원까지 파고들어 원인을 검증합니다.</p>
-      <div class="tags">
-        <span class="tag-a">동시성 제어</span>
-        <span class="tag-b">쿼리·인덱스 최적화</span>
-        <span class="tag-a">스레드·자원 격리</span>
-        <span class="tag-b">오픈소스 기여</span>
-      </div>
     </section>
 
     <section class="timeline-section">
@@ -256,45 +256,27 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       font-weight: 500;
       color: var(--text);
       max-width: 60ch;
-      margin: 0 0 1.8rem;
+      margin: 0;
     }
     .intro .tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-bottom: 0.5rem;
+      gap: 0.5rem;
+      margin: 0 0 2rem;
     }
     .intro .tags span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.78rem;
-      font-weight: 600;
-      border-radius: 999px;
-      padding: 0.35rem 0.9rem;
-    }
-    .intro .tags .tag-a {
-      color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 12%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-    }
-    .intro .tags .tag-b {
+      font-size: 0.76rem;
       color: var(--text-muted);
       background: transparent;
       border: 1px solid var(--border);
-    }
-    .intro .tags span:nth-child(2) {
-      margin-top: 0.5rem;
-    }
-    .intro .tags span:nth-child(4) {
-      margin-top: -0.3rem;
+      border-radius: 999px;
+      padding: 0.3rem 0.85rem;
     }
 
     @media (max-width: 640px) {
       .intro h1 {
         font-size: 1.6rem;
-      }
-      .intro .tags span:nth-child(2),
-      .intro .tags span:nth-child(4) {
-        margin-top: 0;
       }
     }
 
