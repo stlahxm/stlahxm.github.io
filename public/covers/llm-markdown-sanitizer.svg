@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="40 150 880 320" width="880" height="320">
-  <rect x="40" y="150" width="880" height="320" fill="#f4f6fb"/>
+  <rect x="40" y="150" width="880" height="320" fill="#ffffff"/>
   <text x="90" y="270" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="108" font-weight="700" fill="#1a1a1a">llm-markdown</text>
   <text x="90" y="400" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="108" font-weight="700" fill="#2563eb">sanitizer</text>
 </svg>

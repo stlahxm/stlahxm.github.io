@@ -140,6 +140,7 @@ export const projects: ProjectEntity[] = [
     no: "02",
     badge: "MD",
     logo: "/covers/llm-markdown-sanitizer.svg",
+    imageFit: "contain",
     name: "llm-markdown-sanitizer",
     period: "2026.08 ~",
     tag: "PyPI 3600+ 다운로드 오픈소스 라이브러리",
