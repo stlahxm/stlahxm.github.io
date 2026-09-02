@@ -554,13 +554,9 @@ const headerIcon = entity.icon ?? entity.logo;
       max-width: 65ch;
     }
     .demo-layout {
-      display: grid;
-      grid-template-columns: 1fr 1.3fr;
-      gap: 1.2rem;
-      align-items: start;
-    }
-    .demo-layout:not(.has-gif) {
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
     }
     .demo-panel-label {
       font-size: 0.75rem;
@@ -573,6 +569,7 @@ const headerIcon = entity.icon ?? entity.logo;
     .demo-gif-panel img {
       display: block;
       width: 100%;
+      max-width: 720px;
       height: auto;
       border-radius: 10px;
       border: 1px solid var(--border);
@@ -626,11 +623,6 @@ const headerIcon = entity.icon ?? entity.logo;
       transform-origin: top left;
     }
 
-    @media (max-width: 800px) {
-      .demo-layout {
-        grid-template-columns: 1fr;
-      }
-    }
     @media (max-width: 600px) {
       .live-demo-frame:not([data-desktop-width]) iframe {
         height: 420px;
