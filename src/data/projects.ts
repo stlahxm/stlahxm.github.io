@@ -164,7 +164,7 @@ export const projects: ProjectEntity[] = [
     problemRoleApproach: [
       {
         label: "문제",
-        body: "LLM은 표 직후 리스트, 4칸 들여쓰기, 언어 태그 없는 코드펜스에서 CommonMark 사양과 어긋나는 마크다운을 반복해서 생성합니다.",
+        body: "모릭이 강의 자료를 분석한 결과를 마크다운으로 생성해 렌더링하는데, LLM이 표 직후 리스트·4칸 들여쓰기·언어 태그 없는 코드펜스에서 CommonMark 사양과 어긋나는 마크다운을 반복 생성해 렌더링이 깨지는 문제가 계속 반복됐습니다.",
       },
       {
         label: "역할",
