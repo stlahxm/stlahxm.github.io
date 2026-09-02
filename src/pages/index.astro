@@ -157,6 +157,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
   <script>
     const timelineEl = document.querySelector<HTMLDivElement>(".timeline");
     if (timelineEl) {
+      timelineEl.scrollLeft = timelineEl.scrollWidth - timelineEl.clientWidth;
       let target = timelineEl.scrollLeft;
       let raf = 0;
 
