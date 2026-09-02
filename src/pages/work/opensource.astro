@@ -70,21 +70,17 @@ function pad(n: number) {
       {
         openSource.map((repo) => (
           <section class="repo">
-            <div class="repo-head">
-              <div>
-                <h2>{repo.repo}</h2>
-                <p class="repo-desc">
-                  {repo.items.length}건의 이슈 리포트·PR로 기여했습니다.
-                </p>
-              </div>
-              <div class="repo-head-right">
-                <span class="count">{repo.items.length} PRs</span>
-                <a class="repo-link" href={repoUrl(repo.repo)} target="_blank" rel="noreferrer">
-                  GitHub 저장소 ↗
-                </a>
-              </div>
+            <div class="repo-info">
+              <h2>{repo.repo}</h2>
+              <p class="repo-desc">
+                {repo.items.length}건의 이슈 리포트·PR로 기여했습니다.
+              </p>
+              <span class="count">{repo.items.length} PRs</span>
+              <a class="repo-link" href={repoUrl(repo.repo)} target="_blank" rel="noreferrer">
+                GitHub 저장소 ↗
+              </a>
             </div>
-            <ul>
+            <ul class="repo-items">
               {repo.items.map((item, i) => (
                 <li>
                   <span class="item-index">PR {pad(i + 1)}</span>
@@ -202,44 +198,44 @@ function pad(n: number) {
     }
 
     .repo {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 2rem;
+      align-items: start;
+      padding-bottom: 2.8rem;
       margin-bottom: 2.8rem;
+      border-bottom: 1px solid var(--border);
     }
     .repo:last-child {
       margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
-    .repo-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 0.5rem;
-      flex-wrap: wrap;
+    .repo-info {
+      position: sticky;
+      top: 1.5rem;
     }
-    .repo-head h2 {
+    .repo-info h2 {
       font-size: 1.05rem;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-weight: 700;
       color: var(--text-heading);
-      margin: 0 0 0.35rem;
+      margin: 0 0 0.5rem;
+      word-break: break-word;
     }
     .repo-desc {
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin: 0;
-    }
-    .repo-head-right {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      flex-shrink: 0;
+      margin: 0 0 0.8rem;
     }
     .count {
+      display: block;
       font-size: 0.78rem;
       color: var(--text-muted);
+      margin-bottom: 0.6rem;
     }
     .repo-link {
+      display: inline-block;
       font-size: 0.78rem;
       border: 1px solid var(--border);
       border-radius: 999px;
@@ -253,20 +249,21 @@ function pad(n: number) {
       text-decoration: none;
     }
 
-    .repo ul {
+    .repo-items {
       list-style: none;
-      margin: 0.6rem 0 0;
+      margin: 0;
       padding: 0 0 0 1.6rem;
       border-left: 2px solid var(--border);
+      min-width: 0;
     }
-    .repo li {
+    .repo-items li {
       display: flex;
       align-items: flex-start;
       gap: 1.2rem;
       padding: 1.1rem 0;
       border-bottom: 1px dashed var(--border);
     }
-    .repo li:last-child {
+    .repo-items li:last-child {
       border-bottom: none;
     }
     .item-index {
@@ -313,8 +310,20 @@ function pad(n: number) {
       text-decoration: none;
     }
 
+    @media (max-width: 640px) {
+      .repo {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+      .repo-info {
+        position: static;
+      }
+      .repo-items {
+        padding-left: 1rem;
+      }
+    }
     @media (max-width: 600px) {
-      .repo li {
+      .repo-items li {
         flex-direction: column;
         gap: 0.5rem;
       }

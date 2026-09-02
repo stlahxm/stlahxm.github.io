@@ -76,6 +76,9 @@ const github = "https://github.com/stlahxm";
       }
       html {
         scroll-behavior: smooth;
+        /* 모든 페이지의 rem 값은 이 기준으로 계산됨 — 여기를 올리면 사이트 전체
+           폰트 크기가 비율을 유지한 채 같이 커진다. 브라우저 기본(16px) 대비 약 18% 확대. */
+        font-size: 19px;
       }
       body {
         margin: 0;
@@ -84,7 +87,7 @@ const github = "https://github.com/stlahxm";
         font-family: "Pretendard", -apple-system, BlinkMacSystemFont,
           "Apple SD Gothic Neo", "Segoe UI", sans-serif;
         line-height: 1.65;
-        font-size: 15px;
+        font-size: 1rem;
         -webkit-font-smoothing: antialiased;
       }
       a {
