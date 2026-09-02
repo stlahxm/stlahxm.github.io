@@ -8,6 +8,7 @@ export function getStaticPaths() {
 
 const { entity } = Astro.props;
 const headerIcon = entity.icon ?? entity.logo;
+const PRA_EN: Record<string, string> = { 문제: "PROBLEM", 역할: "ROLE", 접근: "APPROACH" };
 ---
 
 <BaseLayout title={`${entity.name} · 심현민`} description={entity.summary}>
@@ -99,15 +100,20 @@ const headerIcon = entity.icon ?? entity.logo;
       entity.problemRoleApproach && (
         <section class="pra">
           {
-            entity.problemRoleApproach.map((item) => (
-              <div class="pra-col">
-                <p class="pra-label">{item.label}</p>
-                <p class="pra-body">{item.body}</p>
-                {item.tags && (
-                  <div class="pra-tags">
-                    {item.tags.map((t) => <span>{t}</span>)}
-                  </div>
-                )}
+            entity.problemRoleApproach.map((item, i) => (
+              <div class="pra-row">
+                <div class="pra-head">
+                  <p class="pra-index">{String(i + 1).padStart(2, "0")} · {PRA_EN[item.label] ?? item.label}</p>
+                  <p class="pra-label">{item.label}</p>
+                </div>
+                <div class="pra-content">
+                  <p class="pra-body">{item.body}</p>
+                  {item.tags && (
+                    <div class="pra-tags">
+                      {item.tags.map((t) => <span>{t}</span>)}
+                    </div>
+                  )}
+                </div>
               </div>
             ))
           }
@@ -306,40 +312,56 @@ const headerIcon = entity.icon ?? entity.logo;
     }
 
     .pra {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.8rem;
-      padding: 1.8rem 0;
       border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
       margin-bottom: 2.5rem;
     }
+    .pra-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 2rem;
+      padding: 1.8rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pra-index {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0 0 0.4rem;
+    }
     .pra-label {
-      font-size: 0.78rem;
+      font-size: 1rem;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin: 0 0 0.5rem;
+      color: var(--text-heading);
+      margin: 0;
     }
     .pra-body {
-      font-size: 0.88rem;
-      line-height: 1.6;
+      font-size: 0.92rem;
+      line-height: 1.7;
       color: var(--text);
       margin: 0;
     }
     .pra-tags {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.7rem;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
     }
     .pra-tags span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.72rem;
       color: var(--text-muted);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 0.15rem 0.6rem;
+      padding: 0.25rem 0.75rem;
+    }
+
+    @media (max-width: 640px) {
+      .pra-row {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+      }
     }
 
     .packages,
