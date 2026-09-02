@@ -4,7 +4,6 @@ interface Props {
   description?: string;
 }
 const { title, description = "동시성 제어, 쿼리·인덱스 최적화, 오픈소스 기여를 해온 백엔드 개발자 심현민" } = Astro.props;
-const email = "shm66371945@gmail.com";
 const github = "https://github.com/stlahxm";
 ---
 
@@ -38,11 +37,6 @@ const github = "https://github.com/stlahxm";
     <slot />
 
     <footer class="site-footer">
-      <p>
-        <a href={`mailto:${email}`}>{email}</a>
-        <span class="dot">·</span>
-        <a href={github} target="_blank" rel="noreferrer">GitHub</a>
-      </p>
       <p class="copyright">© 2026 심현민</p>
     </footer>
 
@@ -138,9 +132,6 @@ const github = "https://github.com/stlahxm";
       .copyright {
         margin-top: 0.4rem;
         font-size: 0.78rem;
-      }
-      .dot {
-        margin: 0 0.4rem;
       }
     </style>
   </body>
