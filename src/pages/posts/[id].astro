@@ -18,11 +18,9 @@ const { Content } = await render(post);
   <main>
     <a class="back" href="/">← 글 목록</a>
     {post.data.cover && (
-      <img
-        class:list={["cover", { "is-logo": post.data.coverFit === "logo" }]}
-        src={post.data.cover}
-        alt=""
-      />
+      <div class:list={["cover-frame", { "is-logo": post.data.coverFit === "logo" }]}>
+        <img src={post.data.cover} alt="" />
+      </div>
     )}
     <p class="post-meta">
       {post.data.category} ·{" "}
@@ -48,17 +46,33 @@ const { Content } = await render(post);
       font-size: 0.85rem;
       color: var(--text-muted);
     }
-    .cover {
-      display: block;
+    .cover-frame {
       width: 100%;
-      height: auto;
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--tint);
       border-radius: 14px;
       border: 1px solid var(--border);
       margin: 1.2rem 0 0;
+      overflow: hidden;
     }
-    .cover.is-logo {
+    .cover-frame.is-logo {
       background: #ffffff;
-      padding: 40px;
+    }
+    .cover-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cover-frame.is-logo img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      padding: 32px;
       box-sizing: border-box;
     }
     .post-meta {
