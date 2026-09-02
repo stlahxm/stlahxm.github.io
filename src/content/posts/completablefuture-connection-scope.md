@@ -5,6 +5,13 @@ pubDate: 2026-05-10
 category: "경력"
 tags: ["동시성", "Spring", "커넥션풀"]
 metric: "p95 응답 속도 7.2s → 363ms 단축"
+stats:
+  - label: "p95 응답 지연"
+    value: "7.2s → 363ms"
+  - label: "DB 커넥션 점유 시간"
+    value: "7.2s → 0.1s 미만"
+  - label: "150 VUs 요청 실패율"
+    value: "100% → 0%"
 badge: "Async"
 cover: "/covers/completablefuture-connection-scope.png"
 coverFit: "logo"

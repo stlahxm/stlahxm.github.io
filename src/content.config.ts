@@ -10,6 +10,7 @@ const posts = defineCollection({
     category: z.enum(["경력", "프로젝트", "오픈소스", "활동"]),
     tags: z.array(z.string()),
     metric: z.string().optional(),
+    stats: z.array(z.object({ label: z.string(), value: z.string() })).optional(),
     badge: z.string(),
     cover: z.string().optional(),
     coverFit: z.enum(["photo", "logo"]).optional(),

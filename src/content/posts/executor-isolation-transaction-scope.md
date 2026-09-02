@@ -5,6 +5,13 @@ pubDate: 2026-06-02
 category: "경력"
 tags: ["동시성", "Spring", "트랜잭션", "커넥션풀"]
 metric: "p95 47.2s → 2.8s (93.9%↓), 처리량 3.4배↑"
+stats:
+  - label: "p95 지연 시간"
+    value: "47.2s → 2.8s"
+  - label: "처리량"
+    value: "3.4배 향상"
+  - label: "비동기 API 평균 응답"
+    value: "3,600ms → 10ms 미만"
 badge: "TX"
 cover: "/covers/executor-isolation-transaction-scope.webp"
 ---

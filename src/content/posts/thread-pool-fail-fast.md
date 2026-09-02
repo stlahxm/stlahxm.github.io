@@ -5,6 +5,13 @@ pubDate: 2026-05-20
 category: "경력"
 tags: ["동시성", "Spring", "Tomcat", "장애격리"]
 metric: "핵심 API 지연 124ms 수준 방어"
+stats:
+  - label: "로그인 등 핵심 API"
+    value: "124ms 이내 서빙"
+  - label: "거절 정책"
+    value: "AbortPolicy (Fail-fast)"
+  - label: "장애 전파 범위"
+    value: "AI 분석 요청으로 격리"
 badge: "Thread"
 cover: "/covers/thread-pool-fail-fast.png"
 coverFit: "logo"

@@ -4,6 +4,13 @@ description: "크레딧 차감이 AI 워커에서 비동기로 처리되며 생�
 pubDate: 2026-05-02
 category: "프로젝트"
 tags: ["동시성", "비동기", "결제"]
+stats:
+  - label: "초과 인출"
+    value: "0건 (원천 봉쇄)"
+  - label: "UI 반영 시점"
+    value: "클릭 즉시"
+  - label: "정합성 보정"
+    value: "작업 종료 시 재동기화"
 badge: "Credit"
 cover: "/covers/credit-refund-optimistic-update.png"
 coverFit: "logo"

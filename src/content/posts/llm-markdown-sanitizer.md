@@ -5,6 +5,13 @@ pubDate: 2026-08-15
 category: "프로젝트"
 tags: ["오픈소스", "Python", "Java"]
 metric: "PyPI 3600+ 다운로드, 응답 20%+ 마크다운 오류 정제"
+stats:
+  - label: "누적 다운로드"
+    value: "3,600+"
+  - label: "자동 정제율"
+    value: "응답 20%+"
+  - label: "지원 언어"
+    value: "Python · Java"
 badge: "MD"
 cover: "/covers/llm-markdown-sanitizer.svg"
 ---

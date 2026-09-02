@@ -5,6 +5,13 @@ pubDate: 2026-04-18
 category: "프로젝트"
 tags: ["Redis", "캐싱", "동시성", "비용최적화"]
 metric: "캐시 적중률 21.6%, 월 100만+ 토큰 비용 방어"
+stats:
+  - label: "중복 문서 캐시 적중률"
+    value: "21.6%"
+  - label: "월간 절감 AI 호출 비용"
+    value: "100만 토큰 이상"
+  - label: "캐시 조회 속도"
+    value: "0.07ms 수준"
 badge: "Lock"
 cover: "/covers/cache-stampede-redis-lock.jpg"
 ---

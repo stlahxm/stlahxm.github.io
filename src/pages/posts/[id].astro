@@ -6,12 +6,21 @@ export async function getStaticPaths() {
   const posts = await getCollection("posts");
   return posts.map((post) => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, allPosts: posts },
   }));
 }
 
-const { post } = Astro.props;
+const { post, allPosts } = Astro.props;
 const { Content } = await render(post);
+
+const others = allPosts
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const related = others.filter((p) =>
+  p.data.tags.some((t) => post.data.tags.includes(t))
+);
+const relatedPosts = (related.length > 0 ? related : others).slice(0, 3);
 ---
 
 <BaseLayout title={`${post.data.title} · 심현민`} description={post.data.description}>
@@ -34,6 +43,49 @@ const { Content } = await render(post);
     <article class="prose">
       <Content />
     </article>
+
+    {
+      post.data.stats && post.data.stats.length > 0 && (
+        <section class="stats-highlight">
+          <p class="stats-eyebrow">핵심 성과</p>
+          <div class="stats-grid">
+            {post.data.stats.map((s) => (
+              <div class="stat">
+                <p class="stat-value">{s.value}</p>
+                <p class="stat-label">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="more-posts">
+      <p class="more-posts-eyebrow">{related.length > 0 ? "관련 글" : "다른 글"}</p>
+      <div class="more-posts-grid">
+        {
+          relatedPosts.map((p) => (
+            <a class="more-post-card" href={`/posts/${p.id}/`}>
+              <div class:list={["more-post-cover", { "is-logo": p.data.coverFit === "logo" }]}>
+                {p.data.cover ? <img src={p.data.cover} alt="" /> : <span>{p.data.badge}</span>}
+              </div>
+              <div class="more-post-body">
+                <p class="more-post-meta">
+                  {p.data.category} ·{" "}
+                  {p.data.pubDate.toLocaleDateString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+                </p>
+                <p class="more-post-title">{p.data.title}</p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+      <a class="all-posts-link" href="/">전체 글 보기 →</a>
+    </section>
   </main>
 
   <style>
@@ -162,10 +214,20 @@ const { Content } = await render(post);
       margin: 2rem 0;
     }
     .prose :global(blockquote) {
-      margin: 0 0 1rem;
-      padding: 0.2rem 0 0.2rem 1rem;
-      border-left: 3px solid var(--border);
-      color: var(--text-muted);
+      margin: 0 0 1.4rem;
+      padding: 1rem 1.3rem;
+      border-left: 4px solid var(--accent);
+      background: var(--tint);
+      border-radius: 0 10px 10px 0;
+      color: var(--text-heading);
+      font-size: 1.02em;
+      font-weight: 500;
+    }
+    .prose :global(blockquote p) {
+      margin: 0;
+    }
+    .prose :global(blockquote p + p) {
+      margin-top: 0.5rem;
     }
 
     /* 인라인 코드 */
@@ -221,6 +283,117 @@ const { Content } = await render(post);
       padding: 1rem;
       overflow-x: auto;
       margin: 0 0 1.2rem;
+    }
+
+    .stats-highlight {
+      margin-top: 3rem;
+      padding: 2.2rem 2rem;
+      background: var(--tint);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .stats-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.3rem;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1.5rem;
+    }
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0 0 0.35rem;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .more-posts {
+      margin-top: 3rem;
+      padding-top: 2.2rem;
+      border-top: 1px solid var(--border);
+    }
+    .more-posts-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.2rem;
+    }
+    .more-posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .more-post-card {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      color: var(--text);
+    }
+    .more-post-card:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+    .more-post-cover {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .more-post-cover.is-logo {
+      background: #ffffff;
+    }
+    .more-post-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .more-post-cover.is-logo img {
+      width: auto;
+      height: auto;
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+    }
+    .more-post-cover span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--text-muted);
+    }
+    .more-post-body {
+      padding: 0.9rem 1rem 1.1rem;
+    }
+    .more-post-meta {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin: 0 0 0.35rem;
+    }
+    .more-post-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .all-posts-link {
+      font-size: 0.85rem;
     }
   </style>
 </BaseLayout>

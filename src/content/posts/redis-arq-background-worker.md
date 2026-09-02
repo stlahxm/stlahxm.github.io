@@ -5,6 +5,13 @@ pubDate: 2026-04-10
 category: "프로젝트"
 tags: ["Redis", "비동기", "GCP", "아키텍처"]
 metric: "요청 처리 성공률 97.4% 달성"
+stats:
+  - label: "요청 처리 성공률"
+    value: "97.4%"
+  - label: "60초 타임아웃 에러"
+    value: "0건"
+  - label: "안정 처리 상한"
+    value: "문서 60페이지"
 badge: "ARQ"
 cover: "/covers/redis-arq-background-worker.png"
 coverFit: "logo"

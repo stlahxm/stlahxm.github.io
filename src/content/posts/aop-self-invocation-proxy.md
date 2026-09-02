@@ -4,6 +4,11 @@ description: "퀴즈 재생성 로직에서 같은 클래스 내 메서드 직�
 pubDate: 2026-05-15
 category: "경력"
 tags: ["Spring", "트랜잭션", "AOP"]
+stats:
+  - label: "삽입 실패 시 롤백 성공률"
+    value: "0% → 100%"
+  - label: "데이터 유실"
+    value: "0건"
 badge: "AOP"
 cover: "/covers/aop-self-invocation-proxy.png"
 coverFit: "logo"

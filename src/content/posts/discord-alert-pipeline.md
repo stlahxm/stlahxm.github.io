@@ -4,6 +4,13 @@ description: "낮은 빈도로 발생해 로그에 묻히던 분석 실패·타�
 pubDate: 2026-04-25
 category: "프로젝트"
 tags: ["운영", "모니터링", "GCP"]
+stats:
+  - label: "에러 자동 분류"
+    value: "11종"
+  - label: "정기 리포트 주기"
+    value: "3시간마다 (하루 8회)"
+  - label: "장애 인지 경로"
+    value: "사용자 제보 → 실시간 알림"
 badge: "Alert"
 cover: "/covers/discord-alert-pipeline.png"
 coverFit: "logo"

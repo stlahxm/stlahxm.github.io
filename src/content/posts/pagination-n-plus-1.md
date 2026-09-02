@@ -5,6 +5,13 @@ pubDate: 2026-08-31
 category: "프로젝트"
 tags: ["MySQL", "쿼리최적화", "N+1", "Spring Data JPA"]
 metric: "쿼리 수 고정 (400건 기준 881회→3회)"
+stats:
+  - label: "쿼리 수 (400건 기준)"
+    value: "881회 → 3회"
+  - label: "페이지당 최대 건수"
+    value: "50건 고정"
+  - label: "N번째 시도 계산"
+    value: "페이지 무관 고정 쿼리"
 badge: "N+1"
 cover: "/covers/pagination-n-plus-1.jpeg"
 ---
