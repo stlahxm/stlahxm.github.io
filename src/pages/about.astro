@@ -90,7 +90,7 @@ const activities = work.filter((w) => w.type === "활동");
                   ))}
                 </div>
               </div>
-              <div class="project-image">
+              <div class:list={["project-image", { "is-contain": p.imageFit === "contain" }]}>
                 {p.logo ? <img src={p.logo} alt="" /> : p.badge}
               </div>
             </a>
@@ -144,7 +144,7 @@ const activities = work.filter((w) => w.type === "활동");
                   ))}
                 </div>
               </div>
-              <div class="project-image">
+              <div class:list={["project-image", { "is-contain": a.imageFit === "contain" }]}>
                 {a.logo ? <img src={a.logo} alt="" /> : a.badge}
               </div>
             </a>
@@ -407,6 +407,9 @@ const activities = work.filter((w) => w.type === "활동");
       .project-image img {
         width: 100%;
         height: 100%;
+        object-fit: cover;
+      }
+      .project-image.is-contain img {
         object-fit: contain;
         padding: 20px;
         box-sizing: border-box;

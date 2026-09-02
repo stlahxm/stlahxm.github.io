@@ -12,6 +12,8 @@ export interface WorkEntity {
   type: "경력" | "활동";
   badge: string;
   logo?: string;
+  /** 소개 페이지 카드 이미지 표시 방식 — 기본 cover(꽉 채움), 워드마크형 로고는 contain 권장 */
+  imageFit?: "cover" | "contain";
   name: string;
   role: string;
   period: string;
@@ -90,6 +92,7 @@ export const work: WorkEntity[] = [
     type: "활동",
     badge: "DB",
     logo: "/logos/ddangbogo-banner.png",
+    imageFit: "contain",
     name: "땅보고 (공공데이터 활용 창업경진대회)",
     role: "서비스 개발 전담",
     period: "2026.07 ~ 현재",

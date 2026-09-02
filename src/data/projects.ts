@@ -14,6 +14,8 @@ export interface ProjectEntity {
   logo?: string;
   /** 헤더 배지용 작은 심플 아이콘. 없으면 logo를 사용 */
   icon?: string;
+  /** 소개 페이지 카드 이미지 표시 방식 — 기본 cover(꽉 채움), 워드마크형 로고는 contain 권장 */
+  imageFit?: "cover" | "contain";
   name: string;
   period: string;
   tag: string;
