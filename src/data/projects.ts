@@ -12,6 +12,8 @@ export interface ProjectEntity {
   no: string;
   badge: string;
   logo?: string;
+  /** 헤더 배지용 작은 심플 아이콘. 없으면 logo를 사용 */
+  icon?: string;
   name: string;
   period: string;
   tag: string;
@@ -42,6 +44,11 @@ export interface ProjectEntity {
   };
   /** 실제 동작을 녹화한 GIF (예: 브라우저 인터랙티브 플레이그라운드) — 있으면 codeDemo보다 우선 표시 */
   demoGif?: { src: string; caption: string };
+  /**
+   * 라이브 데모 iframe을 이 픽셀 폭 기준 데스크톱 레이아웃으로 렌더링한 뒤 컨테이너에 맞게 축소 표시.
+   * 임베드 사이트가 좁은 화면에서 모바일 레이아웃으로 전환돼 버릴 때 사용 (예: 1440).
+   */
+  demoDesktopWidth?: number;
 }
 
 export const projects: ProjectEntity[] = [
@@ -50,6 +57,7 @@ export const projects: ProjectEntity[] = [
     no: "01",
     badge: "MQ",
     logo: "/logos/mori-q-banner.png",
+    icon: "/logos/mori-q-icon.png",
     name: "모릭 (Mori-Q)",
     period: "2025.09 ~",
     tag: "대학생 AI 학습 생산성 플랫폼",
@@ -59,6 +67,7 @@ export const projects: ProjectEntity[] = [
       { label: "홈페이지", href: "https://mori-q.com" },
     ],
     demoUrl: "https://mori-q.com",
+    demoDesktopWidth: 1440,
     architectureImage: "/diagrams/mori-q-architecture.png",
     subtitle:
       "\"강의 자료는 이미 학생들 손에 있습니다. 문제는 시험 때까지 그 자료를 몇 번이고 다시 찾고 이어서 학습할 방법이 없다는 점이었습니다.\"",
@@ -132,6 +141,10 @@ export const projects: ProjectEntity[] = [
       { label: "JitPack", href: "#" },
     ],
     demoUrl: "https://stlahxm.github.io/llm-markdown-sanitizer/",
+    demoGif: {
+      src: "/covers/llm-markdown-sanitizer-demo.gif",
+      caption: "브라우저에서 실제 PyPI 패키지를 그대로 실행합니다(Pyodide) — 별도 서버 없이 왼쪽에 깨진 마크다운을 붙여넣고 Run을 누르면 오른쪽에 정제된 결과가 나옵니다.",
+    },
     metrics: [
       { label: "다운로드", value: "3600+" },
       { label: "자동 정제율", value: "응답 20%+" },

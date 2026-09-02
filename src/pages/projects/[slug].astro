@@ -7,6 +7,7 @@ export function getStaticPaths() {
 }
 
 const { entity } = Astro.props;
+const headerIcon = entity.icon ?? entity.logo;
 ---
 
 <BaseLayout title={`${entity.name} · 심현민`} description={entity.summary}>
@@ -15,7 +16,7 @@ const { entity } = Astro.props;
 
     <header class="entity-header">
       <div class="entity-logo">
-        {entity.logo ? <img src={entity.logo} alt="" /> : entity.badge}
+        {headerIcon ? <img src={headerIcon} alt="" /> : entity.badge}
       </div>
       <div>
         <p class="eyebrow">PROJECT {entity.no} · {entity.period}</p>
@@ -62,17 +63,33 @@ const { entity } = Astro.props;
           <p class="live-demo-desc">
             실제 배포된 페이지입니다. 아래 화면에서 바로 둘러볼 수 있습니다 (사이트 정책상 미리보기가 막혀 있으면 위 링크로 열어주세요).
           </p>
-          <div class="live-demo-frame">
-            <div class="live-demo-bar">
-              <span class="dot" /><span class="dot" /><span class="dot" />
-              <span class="live-demo-url">{entity.demoUrl.replace(/^https?:\/\//, "")}</span>
+          <div class:list={["demo-layout", { "has-gif": entity.demoGif }]}>
+            {
+              entity.demoGif && (
+                <div class="demo-panel demo-gif-panel">
+                  <p class="demo-panel-label">GIF로 보기</p>
+                  <img src={entity.demoGif.src} alt={`${entity.name} 실행 데모`} loading="lazy" />
+                  <p class="demo-gif-caption">{entity.demoGif.caption}</p>
+                </div>
+              )
+            }
+            <div class="demo-panel demo-live-panel">
+              <p class="demo-panel-label">직접 눌러보기</p>
+              <div class="live-demo-frame" data-desktop-width={entity.demoDesktopWidth}>
+                <div class="live-demo-bar">
+                  <span class="dot" /><span class="dot" /><span class="dot" />
+                  <span class="live-demo-url">{entity.demoUrl.replace(/^https?:\/\//, "")}</span>
+                </div>
+                <div class="iframe-scale-viewport">
+                  <iframe
+                    src={entity.demoUrl}
+                    title={`${entity.name} 라이브 데모`}
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                </div>
+              </div>
             </div>
-            <iframe
-              src={entity.demoUrl}
-              title={`${entity.name} 라이브 데모`}
-              loading="lazy"
-              referrerpolicy="no-referrer"
-            />
           </div>
         </section>
       )
@@ -140,51 +157,6 @@ const { entity } = Astro.props;
       )
     }
 
-    {
-      entity.demoGif ? (
-        <section class="code-demo">
-          <div class="code-demo-head">
-            <h2>실제 동작</h2>
-          </div>
-          <div class="demo-gif-frame">
-            <img src={entity.demoGif.src} alt={`${entity.name} 동작 데모`} loading="lazy" />
-          </div>
-          <p class="code-demo-note">{entity.demoGif.caption}</p>
-        </section>
-      ) : (
-        entity.codeDemo && (
-          <section class="code-demo">
-            <div class="code-demo-head">
-              <h2>실제 동작 예시</h2>
-            </div>
-            <div class="terminal">
-              <div class="terminal-bar">
-                <span class="dot dot-r" /><span class="dot dot-y" /><span class="dot dot-g" />
-              </div>
-              <div class="terminal-body">
-                {
-                  entity.codeDemo.terminalLines.map((line, i) => (
-                    <p class:list={["terminal-line", { "is-output": i > 0 }]}>{line}</p>
-                  ))
-                }
-              </div>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col diff-before">
-                <p class="diff-label">{entity.codeDemo.beforeLabel}</p>
-                <pre><code>{entity.codeDemo.beforeCode}</code></pre>
-              </div>
-              <div class="diff-col diff-after">
-                <p class="diff-label">{entity.codeDemo.afterLabel}</p>
-                <pre><code>{entity.codeDemo.afterCode}</code></pre>
-              </div>
-            </div>
-            {entity.codeDemo.note && <p class="code-demo-note">{entity.codeDemo.note}</p>}
-          </section>
-        )
-      )
-    }
-
     <section class="contributions">
       <h2>주요 기여</h2>
       <ul>
@@ -215,6 +187,29 @@ const { entity } = Astro.props;
       )
     }
   </main>
+
+  <script>
+    const DESKTOP_HEIGHT = 900;
+
+    function scaleDesktopIframes() {
+      document.querySelectorAll<HTMLDivElement>(".live-demo-frame[data-desktop-width]").forEach((frame) => {
+        const desktopWidth = Number(frame.dataset.desktopWidth);
+        const viewport = frame.querySelector<HTMLDivElement>(".iframe-scale-viewport");
+        const iframe = frame.querySelector<HTMLIFrameElement>("iframe");
+        if (!viewport || !iframe || !desktopWidth) return;
+
+        const scale = viewport.clientWidth / desktopWidth;
+        iframe.style.width = `${desktopWidth}px`;
+        iframe.style.height = `${DESKTOP_HEIGHT}px`;
+        iframe.style.transform = `scale(${scale})`;
+        viewport.style.height = `${DESKTOP_HEIGHT * scale}px`;
+      });
+    }
+
+    scaleDesktopIframes();
+    requestAnimationFrame(scaleDesktopIframes);
+    window.addEventListener("resize", scaleDesktopIframes);
+  </script>
 
   <style>
     main {
@@ -558,6 +553,36 @@ const { entity } = Astro.props;
       margin: 0 0 1rem;
       max-width: 65ch;
     }
+    .demo-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 1.2rem;
+      align-items: start;
+    }
+    .demo-layout:not(.has-gif) {
+      grid-template-columns: 1fr;
+    }
+    .demo-panel-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin: 0 0 0.5rem;
+    }
+
+    .demo-gif-panel img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .demo-gif-caption {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 0.6rem 0 0;
+    }
+
     .live-demo-frame {
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -585,6 +610,9 @@ const { entity } = Astro.props;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       color: var(--text-muted);
     }
+    .iframe-scale-viewport {
+      overflow: hidden;
+    }
     .live-demo-frame iframe {
       display: block;
       width: 100%;
@@ -592,123 +620,20 @@ const { entity } = Astro.props;
       border: 0;
       background: #fff;
     }
+    /* data-desktop-width가 있으면 JS가 iframe에 고정 px 폭/높이 + transform:scale을 부여해
+       임베드 사이트가 데스크톱 레이아웃으로 렌더링되도록 만든다. */
+    .live-demo-frame[data-desktop-width] .iframe-scale-viewport iframe {
+      transform-origin: top left;
+    }
 
-    @media (max-width: 600px) {
-      .live-demo-frame iframe {
-        height: 420px;
+    @media (max-width: 800px) {
+      .demo-layout {
+        grid-template-columns: 1fr;
       }
     }
-
-    .code-demo {
-      margin-bottom: 2.5rem;
-    }
-    .code-demo-head {
-      margin-bottom: 1.2rem;
-    }
-    .code-demo-head h2 {
-      font-size: 1.1rem;
-      margin: 0.2rem 0 0;
-      color: var(--text-heading);
-    }
-
-    .demo-gif-frame {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: #0d1117;
-      margin-bottom: 0.9rem;
-    }
-    .demo-gif-frame img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .terminal {
-      background: #1e1e1e;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 1.4rem;
-      border: 1px solid var(--border);
-    }
-    .terminal-bar {
-      display: flex;
-      gap: 0.4rem;
-      padding: 0.6rem 0.8rem;
-      background: #2a2a2a;
-    }
-    .terminal-bar .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-    .dot-r { background: #ff5f56; }
-    .dot-y { background: #ffbd2e; }
-    .dot-g { background: #27c93f; }
-    .terminal-body {
-      padding: 0.9rem 1rem 1.1rem;
-    }
-    .terminal-line {
-      margin: 0 0 0.3rem;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.85rem;
-      color: #f0f0f0;
-    }
-    .terminal-line.is-output {
-      color: #8fd694;
-    }
-    .terminal-line:last-child {
-      margin-bottom: 0;
-    }
-
-    .diff-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .diff-col {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .diff-label {
-      margin: 0;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.6rem 0.9rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .diff-before .diff-label {
-      color: #b3403a;
-      background: rgba(220, 80, 70, 0.08);
-    }
-    .diff-after .diff-label {
-      color: #1f8a4c;
-      background: rgba(40, 160, 90, 0.08);
-    }
-    .diff-col pre {
-      margin: 0;
-      padding: 1rem;
-      overflow-x: auto;
-      background: var(--code-bg, #f6f6f6);
-    }
-    .diff-col code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.8rem;
-      line-height: 1.6;
-      color: var(--text);
-      white-space: pre;
-    }
-    .code-demo-note {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin: 1rem 0 0;
-      max-width: 70ch;
-    }
-
-    @media (max-width: 640px) {
-      .diff-grid {
-        grid-template-columns: 1fr;
+    @media (max-width: 600px) {
+      .live-demo-frame:not([data-desktop-width]) iframe {
+        height: 420px;
       }
     }
   </style>
