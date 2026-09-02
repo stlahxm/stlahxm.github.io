@@ -67,7 +67,7 @@ export const projects: ProjectEntity[] = [
       { label: "홈페이지", href: "https://mori-q.com" },
     ],
     demoUrl: "https://mori-q.com",
-    demoDesktopWidth: 1440,
+    demoDesktopWidth: 1024,
     architectureImage: "/diagrams/mori-q-architecture.png",
     subtitle:
       "\"강의 자료는 이미 학생들 손에 있습니다. 문제는 시험 때까지 그 자료를 몇 번이고 다시 찾고 이어서 학습할 방법이 없다는 점이었습니다.\"",
