@@ -1,5 +1,5 @@
 ---
-title: "LLM이 망가뜨린 마크다운을 고쳐주는 라이브러리를 만들었습니다"
+title: "LLM이 망가뜨린 마크다운을 고쳐주는 라이브러리"
 description: "모릭에서 겪은 마크다운 깨짐 문제를 계기로 만든 오픈소스 라이브러리, PyPI 3600+ 다운로드 기록"
 blurb: "LLM 마크다운 오류 정제 라이브러리"
 pubDate: 2026-08-15
@@ -15,6 +15,7 @@ stats:
     value: "Python · Java"
 badge: "MD"
 cover: "/covers/llm-markdown-sanitizer.svg"
+coverFit: "logo"
 ---
 
 LLM은 마크다운을 "대체로 맞게" 씁니다. 문제는 렌더러가 그 "대체로"를 봐주지 않는다는 점입니다.
