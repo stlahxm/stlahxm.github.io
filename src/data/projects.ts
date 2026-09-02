@@ -75,6 +75,8 @@ export const projects: ProjectEntity[] = [
       { label: "요청 성공률", value: "97.4%" },
       { label: "캐시 적중률", value: "21.6%" },
       { label: "쿼리 수 고정", value: "881회→3회" },
+      { label: "100 VU 부하테스트 p95", value: "3.55s→350.8ms" },
+      { label: "월 인프라 고정비", value: "$23~26→$0~2" },
     ],
     problemRoleApproach: [
       {
@@ -95,6 +97,9 @@ export const projects: ProjectEntity[] = [
       { label: "요청 처리", before: "요청 스레드가 AI 연산 직접 처리", after: "Redis+ARQ 분리, 성공률 97.4%" },
       { label: "중복 API 호출", before: "동일 자료 재업로드 시 중복 호출", after: "Redis 락으로 방어, 캐시 적중률 21.6%" },
       { label: "퀴즈 이력 쿼리 수", before: "881회 (N+1)", after: "3회로 고정 (페이지네이션 + IN절)" },
+      { label: "100 VU 부하테스트 p95", before: "3.55s (인스턴스 증설만으로는 개선 안 됨)", after: "350.8ms (Hikari 풀+PgBouncer 재조정)" },
+      { label: "100 VU 부하테스트 실패율", before: "0.16%", after: "0.00%" },
+      { label: "월 DB/Redis 인프라 고정비", before: "$23~26 (Cloud SQL 관리형)", after: "$0~2 (VM 무료 티어 + Postgres self-host)" },
     ],
     contributions: [
       {
@@ -116,6 +121,10 @@ export const projects: ProjectEntity[] = [
         title: "크레딧 선차감 + 실패 시 환불",
         desc: "연타로 악용되던 마이너스 크레딧 문제를 선차감 낙관적 업데이트와 실패 시 환불 로직으로 해결",
         postSlug: "credit-refund-optimistic-update",
+      },
+      {
+        title: "Cloud SQL → Self-host 마이그레이션 + 부하테스트 기반 커넥션 풀 튜닝",
+        desc: "월 $23~26 고정비 Cloud SQL을 VM 무료 티어 Postgres self-host로 전환하고, k6 100 VU 부하테스트로 재현한 커넥션 풀 병목을 PgBouncer 도입과 Hikari 풀 재조정으로 해결, p95 3.55s→350.8ms·실패율 0.16%→0.00% 달성",
       },
       {
         title: "페이지네이션 + N+1 제거",
