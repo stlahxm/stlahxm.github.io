@@ -51,6 +51,34 @@ const { entity } = Astro.props;
     }
 
     {
+      entity.demoUrl && (
+        <section class="live-demo">
+          <div class="live-demo-head">
+            <h2>실제 동작 · 라이브 데모</h2>
+            <a class="demo-open" href={entity.demoUrl} target="_blank" rel="noreferrer">
+              새 창에서 열기 ↗
+            </a>
+          </div>
+          <p class="live-demo-desc">
+            실제 배포된 페이지입니다. 아래 화면에서 바로 둘러볼 수 있습니다 (사이트 정책상 미리보기가 막혀 있으면 위 링크로 열어주세요).
+          </p>
+          <div class="live-demo-frame">
+            <div class="live-demo-bar">
+              <span class="dot" /><span class="dot" /><span class="dot" />
+              <span class="live-demo-url">{entity.demoUrl.replace(/^https?:\/\//, "")}</span>
+            </div>
+            <iframe
+              src={entity.demoUrl}
+              title={`${entity.name} 라이브 데모`}
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            />
+          </div>
+        </section>
+      )
+    }
+
+    {
       entity.problemRoleApproach && (
         <section class="pra">
           {
@@ -112,6 +140,51 @@ const { entity } = Astro.props;
       )
     }
 
+    {
+      entity.demoGif ? (
+        <section class="code-demo">
+          <div class="code-demo-head">
+            <h2>실제 동작</h2>
+          </div>
+          <div class="demo-gif-frame">
+            <img src={entity.demoGif.src} alt={`${entity.name} 동작 데모`} loading="lazy" />
+          </div>
+          <p class="code-demo-note">{entity.demoGif.caption}</p>
+        </section>
+      ) : (
+        entity.codeDemo && (
+          <section class="code-demo">
+            <div class="code-demo-head">
+              <h2>실제 동작 예시</h2>
+            </div>
+            <div class="terminal">
+              <div class="terminal-bar">
+                <span class="dot dot-r" /><span class="dot dot-y" /><span class="dot dot-g" />
+              </div>
+              <div class="terminal-body">
+                {
+                  entity.codeDemo.terminalLines.map((line, i) => (
+                    <p class:list={["terminal-line", { "is-output": i > 0 }]}>{line}</p>
+                  ))
+                }
+              </div>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col diff-before">
+                <p class="diff-label">{entity.codeDemo.beforeLabel}</p>
+                <pre><code>{entity.codeDemo.beforeCode}</code></pre>
+              </div>
+              <div class="diff-col diff-after">
+                <p class="diff-label">{entity.codeDemo.afterLabel}</p>
+                <pre><code>{entity.codeDemo.afterCode}</code></pre>
+              </div>
+            </div>
+            {entity.codeDemo.note && <p class="code-demo-note">{entity.codeDemo.note}</p>}
+          </section>
+        )
+      )
+    }
+
     <section class="contributions">
       <h2>주요 기여</h2>
       <ul>
@@ -138,34 +211,6 @@ const { entity } = Astro.props;
           <a href={entity.architectureImage} target="_blank" rel="noreferrer" class="architecture-frame">
             <img src={entity.architectureImage} alt={`${entity.name} 아키텍처 다이어그램`} loading="lazy" />
           </a>
-        </section>
-      )
-    }
-
-    {
-      entity.demoUrl && (
-        <section class="live-demo">
-          <div class="live-demo-head">
-            <h2>라이브 데모</h2>
-            <a class="demo-open" href={entity.demoUrl} target="_blank" rel="noreferrer">
-              새 창에서 열기 ↗
-            </a>
-          </div>
-          <p class="live-demo-desc">
-            실제 배포된 서비스입니다. 아래 화면에서 바로 둘러볼 수 있습니다 (사이트 정책상 미리보기가 막혀 있으면 위 링크로 열어주세요).
-          </p>
-          <div class="live-demo-frame">
-            <div class="live-demo-bar">
-              <span class="dot" /><span class="dot" /><span class="dot" />
-              <span class="live-demo-url">{entity.demoUrl.replace(/^https?:\/\//, "")}</span>
-            </div>
-            <iframe
-              src={entity.demoUrl}
-              title={`${entity.name} 라이브 데모`}
-              loading="lazy"
-              referrerpolicy="no-referrer"
-            />
-          </div>
         </section>
       )
     }
@@ -551,6 +596,119 @@ const { entity } = Astro.props;
     @media (max-width: 600px) {
       .live-demo-frame iframe {
         height: 420px;
+      }
+    }
+
+    .code-demo {
+      margin-bottom: 2.5rem;
+    }
+    .code-demo-head {
+      margin-bottom: 1.2rem;
+    }
+    .code-demo-head h2 {
+      font-size: 1.1rem;
+      margin: 0.2rem 0 0;
+      color: var(--text-heading);
+    }
+
+    .demo-gif-frame {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0d1117;
+      margin-bottom: 0.9rem;
+    }
+    .demo-gif-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .terminal {
+      background: #1e1e1e;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.4rem;
+      border: 1px solid var(--border);
+    }
+    .terminal-bar {
+      display: flex;
+      gap: 0.4rem;
+      padding: 0.6rem 0.8rem;
+      background: #2a2a2a;
+    }
+    .terminal-bar .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-r { background: #ff5f56; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #27c93f; }
+    .terminal-body {
+      padding: 0.9rem 1rem 1.1rem;
+    }
+    .terminal-line {
+      margin: 0 0 0.3rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85rem;
+      color: #f0f0f0;
+    }
+    .terminal-line.is-output {
+      color: #8fd694;
+    }
+    .terminal-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .diff-col {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .diff-label {
+      margin: 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.6rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .diff-before .diff-label {
+      color: #b3403a;
+      background: rgba(220, 80, 70, 0.08);
+    }
+    .diff-after .diff-label {
+      color: #1f8a4c;
+      background: rgba(40, 160, 90, 0.08);
+    }
+    .diff-col pre {
+      margin: 0;
+      padding: 1rem;
+      overflow-x: auto;
+      background: var(--code-bg, #f6f6f6);
+    }
+    .diff-col code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--text);
+      white-space: pre;
+    }
+    .code-demo-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin: 1rem 0 0;
+      max-width: 70ch;
+    }
+
+    @media (max-width: 640px) {
+      .diff-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>

@@ -31,6 +31,17 @@ export interface ProjectEntity {
   packages?: { name: string; desc: string; installCmd: string; bullets: string[] }[];
   /** 결과 비교 표 */
   resultsTable?: { label: string; before: string; after: string }[];
+  /** 라이브 데모가 없는 라이브러리용 — 터미널 설치 + Before/After 코드 정제 예시 (demoGif가 없을 때 폴백) */
+  codeDemo?: {
+    terminalLines: string[];
+    beforeLabel: string;
+    afterLabel: string;
+    beforeCode: string;
+    afterCode: string;
+    note?: string;
+  };
+  /** 실제 동작을 녹화한 GIF (예: 브라우저 인터랙티브 플레이그라운드) — 있으면 codeDemo보다 우선 표시 */
+  demoGif?: { src: string; caption: string };
 }
 
 export const projects: ProjectEntity[] = [
@@ -49,10 +60,32 @@ export const projects: ProjectEntity[] = [
     ],
     demoUrl: "https://mori-q.com",
     architectureImage: "/diagrams/mori-q-architecture.png",
+    subtitle:
+      "\"강의 자료는 이미 학생들 손에 있습니다. 문제는 시험 때까지 그 자료를 몇 번이고 다시 찾고 이어서 학습할 방법이 없다는 점이었습니다.\"",
     metrics: [
       { label: "요청 성공률", value: "97.4%" },
       { label: "캐시 적중률", value: "21.6%" },
       { label: "쿼리 수 고정", value: "881회→3회" },
+    ],
+    problemRoleApproach: [
+      {
+        label: "문제",
+        body: "AI 분석 파이프라인이 요청 스레드를 직접 점유해 동시 요청이 몰리면 실패율이 치솟았고, 동일 자료 중복 업로드가 AI API를 중복 호출해 비용이 새고 있었습니다.",
+      },
+      {
+        label: "역할",
+        body: "개발자 1(백엔드 전담) · 디자이너 1 · 기획자 1로 구성된 3인 팀에서, 백엔드 아키텍처 설계와 백그라운드 AI 분석 파이프라인 구축을 주도했습니다.",
+        tags: ["개발자 1", "디자이너 1", "기획자 1"],
+      },
+      {
+        label: "접근",
+        body: "Redis + ARQ 백그라운드 워커로 무거운 연산을 요청 스레드에서 분리하고, Redis 락·낙관적 크레딧 차감·페이지네이션으로 동시성·비용·쿼리 문제를 각각 해결했습니다.",
+      },
+    ],
+    resultsTable: [
+      { label: "요청 처리", before: "요청 스레드가 AI 연산 직접 처리", after: "Redis+ARQ 분리, 성공률 97.4%" },
+      { label: "중복 API 호출", before: "동일 자료 재업로드 시 중복 호출", after: "Redis 락으로 방어, 캐시 적중률 21.6%" },
+      { label: "퀴즈 이력 쿼리 수", before: "881회 (N+1)", after: "3회로 고정 (페이지네이션 + IN절)" },
     ],
     contributions: [
       {
@@ -98,6 +131,7 @@ export const projects: ProjectEntity[] = [
       { label: "PyPI", href: "#" },
       { label: "JitPack", href: "#" },
     ],
+    demoUrl: "https://stlahxm.github.io/llm-markdown-sanitizer/",
     metrics: [
       { label: "다운로드", value: "3600+" },
       { label: "자동 정제율", value: "응답 20%+" },
