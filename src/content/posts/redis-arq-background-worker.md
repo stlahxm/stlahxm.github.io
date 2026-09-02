@@ -1,6 +1,7 @@
 ---
 title: "수백 페이지 문서 분석을 요청-응답 밖으로 빼내기"
 description: "오래 걸리는 AI 연산을 요청 스레드가 직접 처리해 Cloud Run 타임아웃으로 504가 발생하던 구조를, Redis 큐+ARQ 워커로 분리한 기록"
+blurb: "AI 연산을 백그라운드 워커로 분리"
 pubDate: 2026-04-10
 category: "프로젝트"
 tags: ["Redis", "비동기", "GCP", "아키텍처"]

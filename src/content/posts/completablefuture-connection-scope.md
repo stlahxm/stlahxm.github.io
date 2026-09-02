@@ -1,6 +1,7 @@
 ---
 title: "순차 호출 8개, 커넥션을 7초 넘게 붙잡던 구조 고치기"
 description: "외부 API를 순차 호출하며 응답 대기 중에도 커넥션을 붙잡던 구조를, CompletableFuture 병렬 실행과 커넥션 점유 시간 분리로 해결한 기록"
+blurb: "순차 API 호출이 커넥션을 오래 붙잡던 문제"
 pubDate: 2026-05-10
 category: "경력"
 tags: ["동시성", "Spring", "커넥션풀"]

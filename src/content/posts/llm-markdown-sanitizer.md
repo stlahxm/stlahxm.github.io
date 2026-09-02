@@ -1,6 +1,7 @@
 ---
 title: "LLM이 망가뜨린 마크다운을 고쳐주는 라이브러리를 만들었습니다"
 description: "모릭에서 겪은 마크다운 깨짐 문제를 계기로 만든 오픈소스 라이브러리, PyPI 3600+ 다운로드 기록"
+blurb: "LLM 마크다운 오류 정제 라이브러리"
 pubDate: 2026-08-15
 category: "프로젝트"
 tags: ["오픈소스", "Python", "Java"]

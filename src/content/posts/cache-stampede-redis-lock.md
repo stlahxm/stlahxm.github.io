@@ -1,6 +1,7 @@
 ---
 title: "같은 자료를 동시에 올리면 AI API가 몇 번씩 호출되던 문제"
 description: "분석 결과가 DB에 저장되기 전 캐시 공백 동안 AI API가 중복 호출되던 문제를, Redis 락과 ARQ 지연 재시도로 해결한 기록"
+blurb: "캐시 공백 중 중복 API 호출 방지"
 pubDate: 2026-04-18
 category: "프로젝트"
 tags: ["Redis", "캐싱", "동시성", "비용최적화"]

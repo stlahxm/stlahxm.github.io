@@ -1,6 +1,7 @@
 ---
-title: "선조회 대신 즉시 insert — 유니크 인덱스로 갭 락 데드락 없애기"
+title: "선조회 대신 즉시 insert, 유니크 인덱스로 갭 락 데드락 없애기"
 description: "WHERE NOT EXISTS 원자적 쿼리에서도 갭 락 승격 경합으로 데드락이 빈발하던 문제를, 선조회 없는 즉시 insert와 유니크 인덱스 조합으로 해결한 기록"
+blurb: "갭 락 승격 데드락을 즉시 insert로 제거"
 pubDate: 2026-05-25
 category: "경력"
 tags: ["MySQL", "동시성", "인덱스", "데드락"]

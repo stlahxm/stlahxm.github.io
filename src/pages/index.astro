@@ -140,7 +140,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
                 })}
               </p>
               <h2>{post.data.title}</h2>
-              <p class="post-desc">{post.data.description}</p>
+              <p class="post-desc">{post.data.blurb ?? post.data.description}</p>
               {post.data.metric && <p class="post-metric">{post.data.metric}</p>}
               <div class="post-tags">
                 {post.data.tags.map((tag) => (
