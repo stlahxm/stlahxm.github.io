@@ -25,6 +25,7 @@ const { entity } = Astro.props;
     </header>
 
     <p class="summary">{entity.summary}</p>
+    {entity.subtitle && <p class="subtitle">{entity.subtitle}</p>}
 
     <div class="links">
       {entity.links.map((l) => <a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}
@@ -40,6 +41,76 @@ const { entity } = Astro.props;
         ))
       }
     </div>
+
+    {
+      entity.logo && entity.subtitle && (
+        <div class="hero-banner">
+          <img src={entity.logo} alt={entity.name} />
+        </div>
+      )
+    }
+
+    {
+      entity.problemRoleApproach && (
+        <section class="pra">
+          {
+            entity.problemRoleApproach.map((item) => (
+              <div class="pra-col">
+                <p class="pra-label">{item.label}</p>
+                <p class="pra-body">{item.body}</p>
+                {item.tags && (
+                  <div class="pra-tags">
+                    {item.tags.map((t) => <span>{t}</span>)}
+                  </div>
+                )}
+              </div>
+            ))
+          }
+        </section>
+      )
+    }
+
+    {
+      entity.packages && (
+        <section class="packages">
+          <h2>패키지 구성</h2>
+          {
+            entity.packages.map((pkg) => (
+              <div class="package-card">
+                <p class="pkg-name">{pkg.name}</p>
+                <p class="pkg-desc">{pkg.desc}</p>
+                <code class="pkg-install">{pkg.installCmd}</code>
+                <ul>
+                  {pkg.bullets.map((b) => <li>{b}</li>)}
+                </ul>
+              </div>
+            ))
+          }
+        </section>
+      )
+    }
+
+    {
+      entity.resultsTable && (
+        <section class="results">
+          <h2>성과</h2>
+          <table>
+            <tbody>
+              {
+                entity.resultsTable.map((r) => (
+                  <tr>
+                    <th>{r.label}</th>
+                    <td class="before">{r.before}</td>
+                    <td class="arrow">→</td>
+                    <td class="after">{r.after}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </section>
+      )
+    }
 
     <section class="contributions">
       <h2>주요 기여</h2>
@@ -59,6 +130,45 @@ const { entity } = Astro.props;
         }
       </ul>
     </section>
+
+    {
+      entity.architectureImage && (
+        <section class="architecture">
+          <h2>아키텍처</h2>
+          <a href={entity.architectureImage} target="_blank" rel="noreferrer" class="architecture-frame">
+            <img src={entity.architectureImage} alt={`${entity.name} 아키텍처 다이어그램`} loading="lazy" />
+          </a>
+        </section>
+      )
+    }
+
+    {
+      entity.demoUrl && (
+        <section class="live-demo">
+          <div class="live-demo-head">
+            <h2>라이브 데모</h2>
+            <a class="demo-open" href={entity.demoUrl} target="_blank" rel="noreferrer">
+              새 창에서 열기 ↗
+            </a>
+          </div>
+          <p class="live-demo-desc">
+            실제 배포된 서비스입니다. 아래 화면에서 바로 둘러볼 수 있습니다 (사이트 정책상 미리보기가 막혀 있으면 위 링크로 열어주세요).
+          </p>
+          <div class="live-demo-frame">
+            <div class="live-demo-bar">
+              <span class="dot" /><span class="dot" /><span class="dot" />
+              <span class="live-demo-url">{entity.demoUrl.replace(/^https?:\/\//, "")}</span>
+            </div>
+            <iframe
+              src={entity.demoUrl}
+              title={`${entity.name} 라이브 데모`}
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            />
+          </div>
+        </section>
+      )
+    }
   </main>
 
   <style>
@@ -121,11 +231,171 @@ const { entity } = Astro.props;
       max-width: 80ch;
       margin: 0 0 1rem;
     }
+    .subtitle {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: var(--text-heading);
+      font-weight: 500;
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      max-width: 70ch;
+      margin: 0 0 1.4rem;
+    }
     .links {
       display: flex;
       gap: 1rem;
       font-size: 0.87rem;
       margin-bottom: 2rem;
+    }
+
+    .hero-banner {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #ffffff;
+      margin-bottom: 2.5rem;
+      overflow: hidden;
+    }
+    .hero-banner img {
+      display: block;
+      width: 100%;
+      max-height: 340px;
+      object-fit: contain;
+      padding: 3rem;
+      box-sizing: border-box;
+    }
+
+    .pra {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.8rem;
+      padding: 1.8rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2.5rem;
+    }
+    .pra-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+    }
+    .pra-body {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text);
+      margin: 0;
+    }
+    .pra-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.7rem;
+    }
+    .pra-tags span {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+    }
+
+    .packages,
+    .results {
+      margin-bottom: 2.5rem;
+    }
+    .packages h2,
+    .results h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.2rem;
+    }
+    .package-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .pkg-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-heading);
+      margin: 0 0 0.4rem;
+    }
+    .pkg-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0 0 0.7rem;
+    }
+    .pkg-install {
+      display: block;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      background: var(--tint);
+      border-radius: 6px;
+      padding: 0.5rem 0.7rem;
+      margin-bottom: 0.7rem;
+      overflow-x: auto;
+    }
+    .package-card ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .package-card li {
+      margin-bottom: 0.3rem;
+    }
+
+    .results table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+    .results th,
+    .results td {
+      border-top: 1px solid var(--border);
+      padding: 0.8rem 0.6rem;
+      text-align: left;
+    }
+    .results th {
+      color: var(--text-heading);
+      font-weight: 600;
+      width: 30%;
+    }
+    .results .before {
+      color: var(--text-muted);
+    }
+    .results .arrow {
+      color: var(--text-muted);
+      width: 1%;
+      padding: 0.8rem 0.4rem;
+    }
+    .results .after {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    @media (max-width: 560px) {
+      .results table,
+      .results tbody,
+      .results tr {
+        display: block;
+      }
+      .results tr {
+        padding: 0.6rem 0;
+        border-top: 1px solid var(--border);
+      }
+      .results th,
+      .results td {
+        display: block;
+        border: none;
+        padding: 0.15rem 0;
+        width: auto;
+      }
     }
 
     .metrics {
@@ -195,6 +465,92 @@ const { entity } = Astro.props;
       .contributions li {
         flex-direction: column;
         gap: 0.5rem;
+      }
+    }
+
+    .architecture,
+    .live-demo {
+      margin-top: 2.6rem;
+      padding-top: 2.2rem;
+      border-top: 1px solid var(--border);
+    }
+    .architecture h2,
+    .live-demo-head h2 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 1.2rem;
+    }
+    .architecture-frame {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .architecture-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .live-demo-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.6rem;
+    }
+    .demo-open {
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+    .live-demo-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0 0 1rem;
+      max-width: 65ch;
+    }
+    .live-demo-frame {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg-subtle, #f5f5f5);
+    }
+    .live-demo-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.8rem;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .live-demo-bar .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      opacity: 0.5;
+    }
+    .live-demo-url {
+      margin-left: 0.6rem;
+      font-size: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--text-muted);
+    }
+    .live-demo-frame iframe {
+      display: block;
+      width: 100%;
+      height: 560px;
+      border: 0;
+      background: #fff;
+    }
+
+    @media (max-width: 600px) {
+      .live-demo-frame iframe {
+        height: 420px;
       }
     }
   </style>
