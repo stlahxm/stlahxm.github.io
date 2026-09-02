@@ -12,6 +12,8 @@ export interface WorkEntity {
   type: "경력" | "활동";
   badge: string;
   logo?: string;
+  /** 상세 페이지 헤더용 정사각 아이콘. 없으면 배지 텍스트로 표시(가로로 긴 logo를 억지로 정사각 박스에 넣지 않기 위함) */
+  icon?: string;
   /** 소개 페이지 카드 이미지 표시 방식 — 기본 cover(꽉 채움), 워드마크형 로고는 contain 권장 */
   imageFit?: "cover" | "contain";
   name: string;
@@ -28,6 +30,7 @@ export const work: WorkEntity[] = [
     type: "경력",
     badge: "ET",
     logo: "/logos/edutem-icon.png",
+    icon: "/logos/edutem-icon.png",
     name: "(주) 에듀템 웹개발팀",
     role: "백엔드 인턴",
     period: "2026.03 – 2026.06",

@@ -7,6 +7,7 @@ export function getStaticPaths() {
 }
 
 const { entity } = Astro.props;
+const headerIcon = entity.icon;
 ---
 
 <BaseLayout title={`${entity.name} · 심현민`} description={entity.summary}>
@@ -15,7 +16,7 @@ const { entity } = Astro.props;
 
     <header class="entity-header">
       <div class="entity-logo">
-        {entity.logo ? <img src={entity.logo} alt="" /> : entity.badge}
+        {headerIcon ? <img src={headerIcon} alt="" /> : entity.badge}
       </div>
       <div>
         <p class="eyebrow">{entity.type} · {entity.period}</p>
@@ -86,7 +87,8 @@ const { entity } = Astro.props;
       overflow: hidden;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-weight: 700;
-      color: var(--text-muted);
+      font-size: 1.9rem;
+      color: var(--text-heading);
     }
     .entity-logo img {
       width: 100%;
