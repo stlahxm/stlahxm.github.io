@@ -47,7 +47,7 @@ tags: ["Java", "동시성", "CompletableFuture"]
 - 미리 채우려면 `prestartCoreThread()`/`prestartAllCoreThreads()` 명시 호출.
 
 **워커 스레드 내부 루프**
-```
+```java
 while (true) {
     task = (현재 스레드 수 <= corePoolSize) ? queue.take()  // 무한 대기 → 코어는 안 죽음
                                             : queue.poll(keepAliveTime, unit); // 초과분만 타임아웃 대기
