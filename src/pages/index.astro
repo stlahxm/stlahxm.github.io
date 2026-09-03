@@ -9,6 +9,36 @@ const posts = (await getCollection("posts")).sort(
 );
 const recentPosts = posts.slice(0, 3);
 
+// 주력 기술 스택 — about.astro 스킬 목록과 동일, 각 항목의 "경험"은
+// work.ts/projects.ts에 실제로 적힌 성과에서만 가져옴(지어낸 내용 없음)
+const skills = [
+  { name: "Java (Spring Boot)", exp: "동시성 제어·AOP·Executor 격리로 스레드 병목 해결" },
+  { name: "JPA/Hibernate", exp: "복합 인덱스로 락 범위 축소, N+1 쿼리 제거" },
+  { name: "MySQL", exp: "함수형 유니크 인덱스로 데드락 제거" },
+  { name: "Redis", exp: "Redis+ARQ 백그라운드 워커, 캐시 스탬피드 방지" },
+  { name: "PostgreSQL", exp: "Cloud SQL → Self-host 마이그레이션, 커넥션 풀 튜닝" },
+  { name: "Docker", exp: "AWS EC2 CI/CD 파이프라인 구성" },
+  { name: "AWS", exp: "EC2 기반 배포 파이프라인" },
+  { name: "GCP", exp: "Cloud Run·Pub/Sub 기반 실시간 알림 파이프라인" },
+];
+
+// 일하는 방식 3가지 — 새로 지어낸 카피가 아니라 hero 문구와 프로젝트 데이터에
+// 반복되는 패턴(모든 카드에 수치 비교, "격리" 키워드가 6개 contribution에 반복)에서 추출
+const values = [
+  {
+    title: "추적",
+    desc: "겉으로 드러나지 않는 병목을 코드와 실측 데이터로 끝까지 추적합니다.",
+  },
+  {
+    title: "격리",
+    desc: "장애나 병목이 생겨도 전체로 번지지 않도록 스레드·자원·트랜잭션 범위를 격리해 설계합니다.",
+  },
+  {
+    title: "검증",
+    desc: "모든 개선은 p95, 실패율 같은 수치로 before/after를 비교해 검증합니다.",
+  },
+];
+
 // 프로젝트를 먼저, 그다음 경력/활동을 최신순으로 — 홈 "프로젝트 & 경력" 카드 섹션용
 const featured = [
   ...projects.map((p) => ({
@@ -70,6 +100,42 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
         </div>
         <div class="laptop-hinge"></div>
         <div class="laptop-base"></div>
+      </div>
+    </section>
+
+    <section class="skills">
+      <div class="section-head section-head--stack">
+        <p class="section-eyebrow">SKILLS</p>
+        <h2>실제로 문제를 해결하며 다뤄온 기술입니다.</h2>
+      </div>
+      <div class="skills-grid">
+        {
+          skills.map((s, i) => (
+            <div class="skill-card reveal" style={`transition-delay: ${i * 70}ms`}>
+              <p class="skill-name">{s.name}</p>
+              <p class="skill-exp">{s.exp}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="values">
+      <div class="section-head section-head--stack">
+        <p class="section-eyebrow">HOW I WORK</p>
+        <h2>추적. 격리. 검증.</h2>
+        <p class="section-desc">문제를 대하는 방식.</p>
+      </div>
+      <div class="values-grid">
+        {
+          values.map((v, i) => (
+            <div class="value-card reveal" style={`transition-delay: ${i * 100}ms`}>
+              <p class="value-index">{String(i + 1).padStart(2, "0")}</p>
+              <h3>{v.title}</h3>
+              <p class="value-desc">{v.desc}</p>
+            </div>
+          ))
+        }
       </div>
     </section>
 
@@ -302,6 +368,92 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     }
     .section-head a:hover {
       color: var(--accent);
+    }
+    .section-head--stack {
+      display: block;
+      margin-bottom: 2rem;
+    }
+    .section-eyebrow {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+    }
+    .section-head--stack h2 {
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem;
+    }
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .skills {
+      margin: 4rem 0;
+    }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .skill-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .skill-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-heading);
+      margin: 0 0 0.4rem;
+    }
+    .skill-exp {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .values {
+      margin: 4rem 0;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .value-card {
+      border-top: 2px solid var(--border);
+      padding: 1.2rem 0 0;
+      transition: border-color 0.15s;
+    }
+    .value-card:hover {
+      border-color: var(--accent);
+    }
+    .value-index {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+    }
+    .value-card h3 {
+      font-size: 1.15rem;
+      color: var(--text-heading);
+      margin: 0 0 0.6rem;
+    }
+    .value-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
     }
 
     .featured {
