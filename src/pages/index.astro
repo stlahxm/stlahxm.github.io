@@ -60,6 +60,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
 <BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
   <main>
     <section class="intro">
+      <div class="intro-glow" aria-hidden="true"></div>
       <p class="intro-eyebrow">심현민 · backend</p>
       <div class="tags">
         <span>동시성 제어</span>
@@ -73,6 +74,26 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
         백엔드 개발자입니다.
       </h1>
       <p class="intro-desc">Java·Spring Boot 기반으로 AI 연동 시스템을 개발하며, 동시성 제어·쿼리·인덱스 최적화·스레드·자원 격리·비동기 아키텍처 설계를 다뤄왔고, redisson·ShedLock·langchain4j 등 오픈소스에도 기여하고 있습니다.</p>
+
+      <div class="laptop">
+        <div class="laptop-bezel">
+          <span class="laptop-cam"></span>
+          <div class="laptop-screen">
+            <div class="term-bar"><span></span><span></span><span></span></div>
+            <pre class="term-body"><code><span class="term-muted">$</span> whoami
+심현민 — backend developer
+
+<span class="term-muted">$</span> cat philosophy.txt
+겉으로 드러나지 않는 병목을
+코드와 실측 데이터로 끝까지 추적합니다.
+
+<span class="term-muted">$</span> ls stack/
+Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-cursor"></span></code></pre>
+          </div>
+        </div>
+        <div class="laptop-hinge"></div>
+        <div class="laptop-base"></div>
+      </div>
     </section>
 
     <section class="timeline-section">
@@ -242,56 +263,157 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
     }
     .intro {
       position: relative;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      overflow: hidden;
+      text-align: center;
+      padding: 4.5rem 2rem 5rem;
+      margin: -2.5rem -2.5rem 3rem;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, #1c2540 0%, #0a0a0d 55%, #050506 100%);
+      border-radius: 0 0 28px 28px;
+    }
+    .intro-glow {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      width: 640px;
+      height: 320px;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.35) 0%, rgba(96, 165, 250, 0) 70%);
+      filter: blur(20px);
+      pointer-events: none;
     }
     .intro-eyebrow {
+      position: relative;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.8rem;
       font-weight: 600;
       letter-spacing: 0.04em;
-      color: var(--text-muted);
-      margin: 0 0 1rem;
+      color: #9a9aa5;
+      margin: 0 0 1.4rem;
       text-transform: uppercase;
     }
     .intro h1 {
-      font-size: 2.5rem;
+      position: relative;
+      font-size: 2.7rem;
       font-weight: 800;
       line-height: 1.32;
       letter-spacing: -0.01em;
-      margin: 0 0 1.2rem;
-      color: var(--text-heading);
+      margin: 0 auto 1.2rem;
+      max-width: 18ch;
+      color: #f5f5f7;
     }
     .intro h1 mark {
       background: none;
-      color: var(--accent);
+      color: #60a5fa;
     }
     .intro-desc {
-      font-size: 1.08rem;
+      position: relative;
+      font-size: 1.05rem;
       font-weight: 500;
-      color: var(--text);
-      max-width: 60ch;
-      margin: 0;
+      color: #b4b4bd;
+      max-width: 56ch;
+      margin: 0 auto;
     }
     .intro .tags {
+      position: relative;
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
       gap: 0.5rem;
-      margin: 0 0 2rem;
+      margin: 0 0 1.6rem;
     }
     .intro .tags span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.76rem;
-      color: var(--text-muted);
-      background: transparent;
-      border: 1px solid var(--border);
+      color: #b4b4bd;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 999px;
       padding: 0.3rem 0.85rem;
     }
 
+    .laptop {
+      position: relative;
+      max-width: 620px;
+      margin: 3.5rem auto 0;
+    }
+    .laptop-bezel {
+      background: linear-gradient(180deg, #1c1c1f, #0a0a0c);
+      border-radius: 16px 16px 5px 5px;
+      padding: 14px 14px 10px;
+      box-shadow: 0 50px 100px -30px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    }
+    .laptop-cam {
+      display: block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #333;
+      margin: 0 auto 8px;
+    }
+    .laptop-screen {
+      background: #08080a;
+      border-radius: 6px;
+      padding: 1.1rem 1.2rem 1.4rem;
+      text-align: left;
+    }
+    .term-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 0.9rem;
+    }
+    .term-bar span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #333;
+    }
+    .term-body {
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      line-height: 1.75;
+      color: #7ee787;
+      white-space: pre-wrap;
+    }
+    .term-muted {
+      color: #666;
+    }
+    .term-cursor {
+      display: inline-block;
+      width: 6px;
+      height: 0.9em;
+      margin-left: 2px;
+      background: #7ee787;
+      vertical-align: -0.1em;
+      animation: term-blink 1s step-end infinite;
+    }
+    @keyframes term-blink {
+      50% {
+        opacity: 0;
+      }
+    }
+    .laptop-hinge {
+      height: 8px;
+      margin: 0 6%;
+      background: linear-gradient(180deg, #111, #000);
+    }
+    .laptop-base {
+      height: 12px;
+      width: 112%;
+      margin-left: -6%;
+      background: linear-gradient(180deg, #2a2a2c, #111);
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+
     @media (max-width: 640px) {
+      .intro {
+        margin: -2.5rem -1.25rem 2.5rem;
+        padding: 3.5rem 1.25rem 3.5rem;
+      }
       .intro h1 {
         font-size: 1.6rem;
+        max-width: none;
       }
     }
 
