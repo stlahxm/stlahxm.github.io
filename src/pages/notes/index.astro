@@ -10,7 +10,7 @@ const notes = (await getCollection("notes")).sort(
 <BaseLayout title="노트 · 심현민" description="공부하며 정리한 개념 메모">
   <main>
     <h1>노트</h1>
-    <p class="lead">공부하면서 정리한 개념 메모. 나중에 다시 찾아보기용.</p>
+    <p class="lead">공부하면서 정리한 개념</p>
 
     <ul class="note-list">
       {
@@ -39,9 +39,8 @@ const notes = (await getCollection("notes")).sort(
 
   <style>
     main {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 3rem 2rem 4rem;
+      width: 100%;
+      padding: 2.5rem 2.5rem 1.5rem;
     }
     h1 {
       font-size: 1.6rem;
