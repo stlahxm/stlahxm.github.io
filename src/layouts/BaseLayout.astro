@@ -51,6 +51,21 @@ const isAbout = path.startsWith("/about");
       </div>
     </div>
 
+    <script>
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              io.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
+      );
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    </script>
+
     <style is:global>
       :root {
         --bg: #ffffff;
@@ -78,6 +93,22 @@ const isAbout = path.startsWith("/about");
 
       * {
         box-sizing: border-box;
+      }
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
       }
       html {
         scroll-behavior: smooth;

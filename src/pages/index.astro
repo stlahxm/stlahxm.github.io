@@ -118,7 +118,7 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       {
         posts.map((post) => (
           <a
-            class="post-card"
+            class="post-card reveal"
             href={`/posts/${post.id}/`}
             data-tags={post.data.tags.join(",")}
             data-pubdate={post.data.pubDate.valueOf()}
@@ -449,10 +449,13 @@ const timeline = Array.from({ length: CURRENT_YEAR - BIRTH_YEAR + 1 }, (_, i) =>
       border: 1px solid var(--border);
       border-radius: 14px;
       overflow: hidden;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
     }
     .post-card:hover {
       border-color: var(--accent);
       text-decoration: none;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
     .post-cover {
       height: 260px;
