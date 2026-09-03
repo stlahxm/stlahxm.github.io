@@ -1,0 +1,165 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes");
+  return notes.map((note) => ({
+    params: { id: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+---
+
+<BaseLayout title={`${note.data.title} · 노트`} description={note.data.summary}>
+  <main>
+    <a class="back" href="/notes">← 노트 목록</a>
+    <p class="note-meta">
+      {note.data.pubDate.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}
+    </p>
+    <h1>{note.data.title}</h1>
+    <div class="note-tags">
+      {note.data.tags.map((tag) => <span>{tag}</span>)}
+    </div>
+    <article class="prose">
+      <Content />
+    </article>
+  </main>
+
+  <style>
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    .back {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .note-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin: 1.6rem 0 0.5rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      line-height: 1.4;
+      color: var(--text-heading);
+      margin: 0 0 0.9rem;
+    }
+    .note-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .note-tags span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.65rem;
+    }
+
+    .prose {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text);
+    }
+    .prose :global(h1) {
+      font-size: 1.3rem;
+      color: var(--text-heading);
+      margin: 2.4rem 0 0.9rem;
+    }
+    .prose :global(h2) {
+      font-size: 1.05rem;
+      color: var(--text-heading);
+      margin: 2.2rem 0 0.8rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid var(--border);
+    }
+    .prose :global(h2:first-child) {
+      padding-top: 0;
+      border-top: none;
+      margin-top: 0;
+    }
+    .prose :global(h3) {
+      font-size: 0.98rem;
+      color: var(--text-heading);
+      margin: 1.6rem 0 0.7rem;
+    }
+    .prose :global(p) {
+      margin: 0 0 1rem;
+    }
+    .prose :global(ul),
+    .prose :global(ol) {
+      margin: 0 0 1rem;
+      padding-left: 1.3rem;
+    }
+    .prose :global(li) {
+      margin-bottom: 0.4rem;
+    }
+    .prose :global(li > ul),
+    .prose :global(li > ol) {
+      margin-top: 0.4rem;
+    }
+    .prose :global(strong) {
+      color: var(--text-heading);
+    }
+    .prose :global(a) {
+      color: var(--accent);
+    }
+    .prose :global(hr) {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    .prose :global(code) {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.85em;
+      background: var(--tint);
+      padding: 0.1em 0.35em;
+      border-radius: 4px;
+    }
+    .prose :global(pre) {
+      background: var(--tint);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 0 0 1.2rem;
+      overflow-x: auto;
+      font-size: 0.85em;
+      line-height: 1.6;
+    }
+    .prose :global(pre code) {
+      background: none;
+      padding: 0;
+      border-radius: 0;
+      font-size: 1em;
+    }
+
+    .prose :global(table) {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 1.4rem;
+      font-size: 0.88em;
+    }
+    .prose :global(th),
+    .prose :global(td) {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.8rem;
+      text-align: left;
+    }
+    .prose :global(th) {
+      background: var(--tint);
+      color: var(--text-heading);
+      font-weight: 600;
+    }
+  </style>
+</BaseLayout>

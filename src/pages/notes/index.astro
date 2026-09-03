@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const notes = (await getCollection("notes")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<BaseLayout title="노트 · 심현민" description="공부하며 정리한 개념 메모">
+  <main>
+    <h1>노트</h1>
+    <p class="lead">공부하면서 정리한 개념 메모. 나중에 다시 찾아보기용.</p>
+
+    <ul class="note-list">
+      {
+        notes.map((note) => (
+          <li>
+            <a href={`/notes/${note.id}/`}>
+              <p class="note-title">{note.data.title}</p>
+              <p class="note-summary">{note.data.summary}</p>
+              <div class="note-meta">
+                <span class="note-date">
+                  {note.data.pubDate.toLocaleDateString("ko-KR", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+                </span>
+                {note.data.tags.map((tag) => <span class="note-tag">{tag}</span>)}
+              </div>
+            </a>
+          </li>
+        ))
+      }
+      {notes.length === 0 && <p class="empty">아직 작성된 노트가 없습니다.</p>}
+    </ul>
+  </main>
+
+  <style>
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      color: var(--text-heading);
+      margin: 0 0 0.5rem;
+    }
+    .lead {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin: 0 0 2.5rem;
+    }
+    .note-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .note-list li {
+      border-bottom: 1px solid var(--border);
+    }
+    .note-list a {
+      display: block;
+      padding: 1.4rem 0;
+      color: var(--text);
+    }
+    .note-list a:hover {
+      text-decoration: none;
+    }
+    .note-list a:hover .note-title {
+      color: var(--accent);
+    }
+    .note-title {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text-heading);
+      margin: 0 0 0.4rem;
+      transition: color 0.15s;
+    }
+    .note-summary {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+      line-height: 1.6;
+    }
+    .note-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    .note-tag {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.1rem 0.6rem;
+    }
+    .empty {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 1.4rem 0;
+    }
+  </style>
+</BaseLayout>

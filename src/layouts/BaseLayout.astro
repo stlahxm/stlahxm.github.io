@@ -8,6 +8,7 @@ const github = "https://github.com/stlahxm";
 const path = Astro.url.pathname;
 const isHome = path === "/";
 const isAbout = path.startsWith("/about");
+const isNotes = path.startsWith("/notes");
 ---
 
 <html lang="ko">
@@ -36,8 +37,11 @@ const isAbout = path.startsWith("/about");
           <a href="/about" class:list={[{ active: isAbout }]}>
             <span class="side-index">02</span>소개
           </a>
+          <a href="/notes" class:list={[{ active: isNotes }]}>
+            <span class="side-index">03</span>노트
+          </a>
           <a href={github} target="_blank" rel="noreferrer">
-            <span class="side-index">03</span>GitHub ↗
+            <span class="side-index">04</span>GitHub ↗
           </a>
         </nav>
       </aside>
