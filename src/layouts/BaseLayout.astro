@@ -6,8 +6,8 @@ interface Props {
 const { title, description = "동시성 제어, 쿼리·인덱스 최적화, 오픈소스 기여를 해온 백엔드 개발자 심현민" } = Astro.props;
 const github = "https://github.com/stlahxm";
 const path = Astro.url.pathname;
-const isHome = path === "/";
 const isAbout = path.startsWith("/about");
+const isPosts = path.startsWith("/posts");
 const isNotes = path.startsWith("/notes");
 ---
 
@@ -31,7 +31,7 @@ const isNotes = path.startsWith("/notes");
       <aside class="side-nav">
         <a href="/" class="brand">심현민</a>
         <nav class="side-links">
-          <a href="/#posts" class:list={[{ active: isHome }]}>
+          <a href="/posts" class:list={[{ active: isPosts }]}>
             <span class="side-index">01</span>글
           </a>
           <a href="/about" class:list={[{ active: isAbout }]}>

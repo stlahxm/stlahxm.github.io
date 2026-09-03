@@ -1,0 +1,308 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { work } from "../../data/work";
+import { projects } from "../../data/projects";
+
+const posts = (await getCollection("posts")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+// 목록 카드에 "경력"/"프로젝트" 대신 실제 소속(모릭, 에듀템 인턴 등)을 보여주기 위한
+// postSlug -> 표시명 매핑. work는 회사명+역할, projects는 프로젝트명을 그대로 사용.
+const postEntityLabel = new Map<string, string>();
+for (const w of work) {
+  const shortName = w.name.replace(/^\(주\)\s*/, "").split(/[ (]/)[0];
+  for (const c of w.contributions) {
+    if (c.postSlug) postEntityLabel.set(c.postSlug, `${shortName} ${w.role.replace(/^.*·\s*/, "").replace(/^백엔드\s*/, "")}`.trim());
+  }
+}
+for (const p of projects) {
+  const shortName = p.name.split(" (")[0];
+  for (const c of p.contributions) {
+    if (c.postSlug) postEntityLabel.set(c.postSlug, shortName);
+  }
+}
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
+---
+
+<BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
+  <main>
+    <section class="page-head">
+      <h1>전체 글 <span class="count">({posts.length})</span></h1>
+      <div class="sort-toggle" id="sort-toggle">
+        <button class="sort-btn active" data-sort="newest">최신순</button>
+        <button class="sort-btn" data-sort="oldest">오래된순</button>
+      </div>
+    </section>
+
+    <div class="tag-filter" id="tag-filter">
+      <button class="tag-chip active" data-tag="">전체 ({posts.length})</button>
+      {
+        tags.map(([tag, count]) => (
+          <button class="tag-chip" data-tag={tag}>
+            {tag} ({count})
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="post-list" id="post-grid">
+      {
+        posts.map((post) => (
+          <a
+            class="post-card reveal"
+            href={`/posts/${post.id}/`}
+            data-tags={post.data.tags.join(",")}
+            data-pubdate={post.data.pubDate.valueOf()}
+          >
+            <div class:list={["post-cover", { "is-logo": post.data.coverFit === "logo" }]}>
+              {post.data.cover ? (
+                <img src={post.data.cover} alt="" />
+              ) : (
+                <span>{post.data.badge}</span>
+              )}
+            </div>
+            <div class="post-body">
+              <p class="post-meta">
+                {postEntityLabel.get(post.id) ?? post.data.category} ·{" "}
+                {post.data.pubDate.toLocaleDateString("ko-KR", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })}
+              </p>
+              <h2>{post.data.title}</h2>
+              <p class="post-desc">{post.data.blurb ?? post.data.description}</p>
+              {post.data.metric && <p class="post-metric">{post.data.metric}</p>}
+              <div class="post-tags">
+                {post.data.tags.map((tag) => (
+                  <span>{tag}</span>
+                ))}
+              </div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </main>
+
+  <script>
+    const sortEl = document.getElementById("sort-toggle");
+    const gridForSort = document.getElementById("post-grid");
+
+    sortEl?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".sort-btn");
+      if (!btn || !gridForSort) return;
+      const order = btn.dataset.sort;
+
+      sortEl.querySelectorAll<HTMLButtonElement>(".sort-btn").forEach((el) => {
+        el.classList.toggle("active", el === btn);
+      });
+
+      const cards = [...gridForSort.querySelectorAll<HTMLAnchorElement>(".post-card")];
+      cards.sort((a, b) => {
+        const diff = Number(a.dataset.pubdate) - Number(b.dataset.pubdate);
+        return order === "oldest" ? diff : -diff;
+      });
+      cards.forEach((card) => gridForSort.appendChild(card));
+    });
+
+    const filterEl = document.getElementById("tag-filter");
+    const gridEl = document.getElementById("post-grid");
+    const active = new Set<string>();
+
+    filterEl?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag-chip");
+      if (!btn) return;
+      const tag = btn.dataset.tag ?? "";
+
+      if (tag === "") {
+        active.clear();
+      } else {
+        active.has(tag) ? active.delete(tag) : active.add(tag);
+      }
+
+      filterEl.querySelectorAll<HTMLButtonElement>(".tag-chip").forEach((el) => {
+        const t = el.dataset.tag ?? "";
+        el.classList.toggle("active", t === "" ? active.size === 0 : active.has(t));
+      });
+
+      gridEl?.querySelectorAll<HTMLAnchorElement>(".post-card").forEach((card) => {
+        const cardTags = (card.dataset.tags ?? "").split(",");
+        const visible = active.size === 0 || cardTags.some((t) => active.has(t));
+        card.style.display = visible ? "" : "none";
+      });
+    });
+  </script>
+
+  <style>
+    main {
+      width: 100%;
+      padding: 2.5rem 2.5rem 4rem;
+    }
+    .page-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .page-head h1 {
+      font-size: 1.6rem;
+      margin: 0;
+      color: var(--text-heading);
+    }
+    .page-head .count {
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .sort-toggle {
+      display: flex;
+      gap: 0.3rem;
+    }
+    .sort-btn {
+      font: inherit;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+    }
+    .sort-btn:hover {
+      color: var(--accent);
+    }
+    .sort-btn.active {
+      color: var(--text-heading);
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .tag-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.6rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .tag-chip {
+      font: inherit;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+    }
+    .tag-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .tag-chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .post-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 2rem;
+    }
+    .post-card {
+      display: flex;
+      flex-direction: column;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+    .post-card:hover {
+      border-color: var(--accent);
+      text-decoration: none;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    .post-cover {
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--tint);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .post-cover.is-logo {
+      background: #ffffff;
+    }
+    .post-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .post-cover.is-logo img {
+      object-fit: contain;
+      padding: 32px;
+    }
+    .post-cover span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+    .post-body {
+      padding: 1.4rem 1.5rem 1.6rem;
+    }
+    .post-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0 0 0.6rem;
+    }
+    .post-body h2 {
+      font-size: 1.3rem;
+      line-height: 1.4;
+      margin: 0 0 0.6rem;
+      color: var(--text-heading);
+    }
+    .post-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin: 0 0 0.7rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .post-metric {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 0.7rem;
+    }
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .post-tags span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+    }
+  </style>
+</BaseLayout>
