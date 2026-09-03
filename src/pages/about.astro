@@ -245,11 +245,9 @@ const activities = work.filter((w) => w.type === "활동");
 
       .resume-sheet {
         width: 100%;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        padding: 2.5rem 2.5rem;
+        max-width: 900px;
+        background: transparent;
+        padding: 0;
       }
 
       .resume-header {
@@ -258,15 +256,16 @@ const activities = work.filter((w) => w.type === "활동");
         align-items: baseline;
         flex-wrap: wrap;
         gap: 1rem;
-        padding-bottom: 1.6rem;
-        margin-bottom: 1.6rem;
+        padding-bottom: 2.2rem;
+        margin-bottom: 2.2rem;
       }
       .resume-heading h1 {
-        font-size: 2rem;
-        font-weight: 700;
-        margin: 0 0 0.2rem;
+        font-size: 3rem;
+        font-weight: 800;
+        margin: 0 0 0.3rem;
         color: var(--text-heading);
-        letter-spacing: 0.02em;
+        letter-spacing: -0.02em;
+        line-height: 1;
       }
       .resume-title {
         margin: 0;
@@ -315,7 +314,7 @@ const activities = work.filter((w) => w.type === "활동");
         display: grid;
         grid-template-columns: 140px 1fr;
         gap: 1.5rem;
-        padding: 1.6rem 0;
+        padding: 2.8rem 0;
         border-top: 1px solid var(--border);
       }
       .resume-label {
@@ -336,11 +335,13 @@ const activities = work.filter((w) => w.type === "활동");
         gap: 0.4rem;
       }
       .tags span {
-        font-size: 0.76rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 0.15rem 0.65rem;
+      }
+      .tags span:not(:last-child)::after {
+        content: "·";
+        margin-left: 0.7rem;
+        color: var(--border);
       }
 
       .card {
@@ -450,10 +451,9 @@ const activities = work.filter((w) => w.type === "활동");
       .project-image {
         flex: 0 0 360px;
         height: 200px;
-        border-radius: 16px;
+        border-radius: 10px;
         background: #ffffff;
         border: 1px solid var(--border);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -504,10 +504,9 @@ const activities = work.filter((w) => w.type === "활동");
       .entity-logo {
         flex: 0 0 72px;
         height: 72px;
-        border-radius: 14px;
+        border-radius: 10px;
         background: #ffffff;
         border: 1px solid var(--border);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -566,7 +565,7 @@ const activities = work.filter((w) => w.type === "활동");
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-weight: 600;
         color: var(--accent);
-        background: color-mix(in srgb, var(--accent) 12%, transparent);
+        border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
         border-radius: 999px;
         padding: 0.2rem 0.7rem;
       }
