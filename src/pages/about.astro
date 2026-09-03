@@ -26,6 +26,7 @@ const activities = work.filter((w) => w.type === "활동");
           <h1>심현민</h1>
           <p class="resume-title">Backend Engineer</p>
         </div>
+        <a class="header-email" href={`mailto:${email}`}>{email}</a>
       </header>
 
       <p class="resume-summary">
@@ -37,7 +38,7 @@ const activities = work.filter((w) => w.type === "활동");
       </p>
 
       <div class="resume-row reveal">
-        <span class="resume-label">skills</span>
+        <span class="resume-label">스킬</span>
         <div class="tags">
           <span>Java (Spring Boot)</span>
           <span>JPA/Hibernate</span>
@@ -49,27 +50,6 @@ const activities = work.filter((w) => w.type === "활동");
           <span>GCP</span>
         </div>
       </div>
-
-      <section id="career" class="resume-row reveal">
-        <h2 class="resume-label">경력</h2>
-        <div class="resume-content">
-        {
-          career.map((job) => (
-            <a class="entity-row" href={`/work/${job.slug}/`}>
-              <span class="entity-logo">
-                {job.logo ? <img src={job.logo} alt="" /> : job.badge}
-              </span>
-              <span class="entity-main">
-                <span class="entity-name">{job.name}</span>
-                <span class="entity-sub">{job.role}</span>
-              </span>
-              <span class="period">{job.period}</span>
-              <span class="entity-arrow">↗</span>
-            </a>
-          ))
-        }
-        </div>
-      </section>
 
       <section id="projects" class="resume-row reveal">
         <h2 class="resume-label">프로젝트</h2>
@@ -90,6 +70,27 @@ const activities = work.filter((w) => w.type === "활동");
               <div class:list={["project-image", { "is-contain": p.imageFit === "contain" }]}>
                 {p.logo ? <img src={p.logo} alt="" /> : p.badge}
               </div>
+            </a>
+          ))
+        }
+        </div>
+      </section>
+
+      <section id="career" class="resume-row reveal">
+        <h2 class="resume-label">경력</h2>
+        <div class="resume-content">
+        {
+          career.map((job) => (
+            <a class="entity-row" href={`/work/${job.slug}/`}>
+              <span class="entity-logo">
+                {job.logo ? <img src={job.logo} alt="" /> : job.badge}
+              </span>
+              <span class="entity-main">
+                <span class="entity-name">{job.name}</span>
+                <span class="entity-sub">{job.role}</span>
+              </span>
+              <span class="period">{job.period}</span>
+              <span class="entity-arrow">↗</span>
             </a>
           ))
         }
@@ -272,6 +273,13 @@ const activities = work.filter((w) => w.type === "활동");
         color: var(--text-muted);
         font-size: 0.95rem;
       }
+      .header-email {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+      .header-email:hover {
+        color: var(--accent);
+      }
       .contact-links {
         display: flex;
         gap: 0.9rem;
@@ -299,7 +307,7 @@ const activities = work.filter((w) => w.type === "활동");
       .resume-summary {
         font-size: 0.92rem;
         color: var(--text);
-        max-width: 90ch;
+        max-width: 68ch;
         margin: 0 0 1.8rem;
       }
 
@@ -549,10 +557,18 @@ const activities = work.filter((w) => w.type === "활동");
       .oss-repo-head {
         display: flex;
         justify-content: space-between;
-        align-items: baseline;
+        align-items: center;
         border-bottom: 1px solid var(--border);
         padding-bottom: 0.4rem;
         margin-bottom: 0.6rem;
+      }
+      .oss-repo-head .period {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-weight: 600;
+        color: var(--accent);
+        background: color-mix(in srgb, var(--accent) 12%, transparent);
+        border-radius: 999px;
+        padding: 0.2rem 0.7rem;
       }
       .oss-repo-head h3 {
         font-size: 0.9rem;
