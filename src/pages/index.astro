@@ -67,21 +67,18 @@ const skillCategories = [
 
 // AI 활용 방식 3가지 — 모릭(Mori-Q) 프로젝트의 실제 RAG 파이프라인 규칙(CLAUDE.md)과
 // work.ts에 이미 적힌 contribution에서만 가져옴. AI 제품 기능이 아니라 AI를 다루는 태도.
+// AI 제품 기능이 아니라, 개발자로서 AI/자동화 도구를 업무 효율에 쓰는 방식.
+// CLAUDE.md에 이미 명시된 실제 워크플로 규칙(CodeRabbit·gitleaks·semgrep)에서 가져옴.
 const aiApproach = [
   {
-    eyebrow: "3단계로 나눠 다룸",
-    title: "지식 증류 → 전략 수립 → 최종 합성",
-    desc: "한 번의 호출로 답을 받기보다, 자료를 압축(Distiller)하고 계획을 세운(Strategist) 뒤 마지막에 합성(Synthesizer)하는 3단계 파이프라인으로 나눠 복잡도를 구조적으로 다룹니다.",
+    eyebrow: "머지 전 자동 리뷰 관문",
+    title: "AI 코드 리뷰를 PR 프로세스에 결합",
+    desc: "PR을 올리면 CodeRabbit이 자동으로 리뷰 코멘트를 남기도록 구성하고, 머지를 제안하기 전 항상 코멘트 반영 여부를 확인하는 걸 표준 워크플로로 삼습니다.",
   },
   {
-    eyebrow: "출처 없는 답은 신뢰하지 않음",
-    title: "할루시네이션 방어",
-    desc: "temperature를 보수적으로 유지하고, 모든 생성 결과 옆에 [📄 Page n] 형식의 출처 표기를 강제해 근거 없는 답변을 걸러냅니다.",
-  },
-  {
-    eyebrow: "느린 AI가 시스템을 막지 않게",
-    title: "응답 대기와 자원 분리",
-    desc: "AI 응답을 기다리는 동안 스레드·DB 커넥션이 함께 묶이지 않도록 전용 Executor와 백그라운드 워커로 격리해, AI 호출 지연이 다른 요청까지 밀어내지 않게 설계합니다.",
+    eyebrow: "PR마다 자동 검증",
+    title: "정적분석·시크릿 스캔 CI 자동화",
+    desc: "gitleaks(시크릿 스캔)·semgrep(정적분석)을 CI에 연결해 PR마다 자동으로 돌리고, 실패하면 그냥 재시도하지 않고 원인을 진단해 고칩니다.",
   },
   {
     eyebrow: "도구 자체를 확장해서 씀",
