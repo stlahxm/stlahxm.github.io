@@ -39,29 +39,22 @@ const values = [
   },
 ];
 
-// 프로젝트를 먼저, 그다음 경력/활동을 최신순으로 — 홈 "프로젝트 & 경력" 카드 섹션용
-const featured = [
-  ...projects.map((p) => ({
-    href: `/projects/${p.slug}/`,
-    kind: "PROJECT",
-    period: p.period,
-    name: p.name,
-    desc: p.tag,
-    logo: p.logo,
-    badge: p.badge,
-    imageFit: p.imageFit,
-  })),
-  ...work.map((w) => ({
-    href: `/work/${w.slug}/`,
-    kind: w.type === "경력" ? "CAREER" : "ACTIVITY",
-    period: w.period,
-    name: w.name,
-    desc: w.role,
-    logo: w.logo,
-    badge: w.badge,
-    imageFit: undefined as "cover" | "contain" | undefined,
-  })),
-];
+// 로고 이미지는 화질·비율이 제각각이라 텍스트 중심 카드로 통일 — 배지(약어)만 표시
+const featuredProjects = projects.map((p) => ({
+  href: `/projects/${p.slug}/`,
+  period: p.period,
+  name: p.name,
+  desc: p.tag,
+  badge: p.badge,
+}));
+const featuredWork = work.map((w) => ({
+  href: `/work/${w.slug}/`,
+  kind: w.type,
+  period: w.period,
+  name: w.name,
+  desc: w.role,
+  badge: w.badge,
+}));
 ---
 
 <BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
@@ -112,6 +105,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
         {
           skills.map((s, i) => (
             <div class="skill-card reveal" style={`transition-delay: ${i * 70}ms`}>
+              <span class="skill-accent" aria-hidden="true" />
               <p class="skill-name">{s.name}</p>
               <p class="skill-exp">{s.exp}</p>
             </div>
@@ -143,21 +137,36 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
 
     <section class="featured">
       <div class="section-head">
-        <h2>프로젝트 &amp; 경력</h2>
-        <a href="/about">전체 이력 보기 →</a>
+        <h2>프로젝트</h2>
+        <a href="/about#projects">전체 이력 보기 →</a>
       </div>
       <div class="feature-grid">
         {
-          featured.map((item) => (
-            <a class="feature-card reveal" href={item.href}>
-              <div class:list={["feature-cover", { "is-contain": item.imageFit === "contain" }]}>
-                {item.logo ? <img src={item.logo} alt={item.name} loading="lazy" /> : <span>{item.badge}</span>}
-              </div>
-              <div class="feature-body">
-                <p class="feature-meta">{item.kind} · {item.period}</p>
-                <h3>{item.name}</h3>
-                <p class="feature-desc">{item.desc}</p>
-              </div>
+          featuredProjects.map((item, i) => (
+            <a class="feature-card reveal" href={item.href} style={`transition-delay: ${i * 80}ms`}>
+              <span class="feature-badge">{item.badge}</span>
+              <p class="feature-meta">PROJECT · {item.period}</p>
+              <h3>{item.name}</h3>
+              <p class="feature-desc">{item.desc}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="career">
+      <div class="section-head">
+        <h2>경력 &amp; 활동</h2>
+        <a href="/about#career">전체 이력 보기 →</a>
+      </div>
+      <div class="feature-grid">
+        {
+          featuredWork.map((w, i) => (
+            <a class="feature-card reveal" href={w.href} style={`transition-delay: ${i * 80}ms`}>
+              <span class="feature-badge">{w.badge}</span>
+              <p class="feature-meta">{w.kind.toUpperCase()} · {w.period}</p>
+              <h3>{w.name}</h3>
+              <p class="feature-desc">{w.desc}</p>
             </a>
           ))
         }
@@ -446,10 +455,21 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       gap: 1rem;
     }
     .skill-card {
+      position: relative;
+      overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1.1rem 1.2rem;
       transition: border-color 0.15s, transform 0.15s;
+    }
+    .skill-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--accent);
+      opacity: 0.55;
     }
     .skill-card:hover {
       border-color: var(--accent);
@@ -511,12 +531,12 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       gap: 1.5rem;
     }
     .feature-card {
-      display: flex;
-      flex-direction: column;
+      position: relative;
+      display: block;
       color: var(--text);
       border: 1px solid var(--border);
       border-radius: 14px;
-      overflow: hidden;
+      padding: 1.4rem 1.4rem 1.6rem;
       transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
     }
     .feature-card:hover {
@@ -525,35 +545,16 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       transform: translateY(-3px);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
-    .feature-cover {
-      height: 230px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--tint);
-      border-bottom: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .feature-cover.is-contain {
-      background: #ffffff;
-    }
-    .feature-cover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .feature-cover.is-contain img {
-      object-fit: contain;
-      padding: 24px;
-    }
-    .feature-cover span {
+    .feature-badge {
+      display: inline-block;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.72rem;
       font-weight: 700;
-      font-size: 1.8rem;
-      color: var(--text-muted);
-    }
-    .feature-body {
-      padding: 1.1rem 1.25rem 1.3rem;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border-radius: 6px;
+      padding: 0.2rem 0.5rem;
+      margin: 0 0 0.9rem;
     }
     .feature-meta {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -562,7 +563,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       color: var(--text-muted);
       margin: 0 0 0.5rem;
     }
-    .feature-body h3 {
+    .feature-card h3 {
       font-size: 1.05rem;
       line-height: 1.4;
       margin: 0 0 0.4rem;
@@ -573,6 +574,10 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       color: var(--text-muted);
       margin: 0;
       line-height: 1.5;
+    }
+
+    .career {
+      margin: 3rem 0;
     }
 
     .recent-posts {
