@@ -218,7 +218,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       text-align: left;
       padding: 4.5rem 2rem 5rem;
       margin: -2.5rem -2.5rem 3rem;
-      background: radial-gradient(ellipse 80% 60% at 50% -10%, #1c2540 0%, #0a0a0d 55%, #050506 100%);
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, var(--tint) 0%, var(--bg) 55%, #020c1b 100%);
       border-radius: 0 0 28px 28px;
     }
     .intro-glow {
@@ -228,7 +228,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       width: 640px;
       height: 320px;
       transform: translateX(-50%);
-      background: radial-gradient(circle, rgba(96, 165, 250, 0.35) 0%, rgba(96, 165, 250, 0) 70%);
+      background: radial-gradient(circle, color-mix(in srgb, var(--accent) 30%, transparent) 0%, transparent 70%);
       filter: blur(20px);
       pointer-events: none;
     }
@@ -238,7 +238,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       font-size: 0.8rem;
       font-weight: 600;
       letter-spacing: 0.04em;
-      color: #9a9aa5;
+      color: var(--text-muted);
       margin: 0 0 1.4rem;
       text-transform: uppercase;
     }
@@ -251,17 +251,17 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       margin: 0 0 1.2rem;
       max-width: none;
       text-wrap: balance;
-      color: #f5f5f7;
+      color: var(--text-heading);
     }
     .intro h1 mark {
       background: none;
-      color: #60a5fa;
+      color: var(--accent);
     }
     .intro-desc {
       position: relative;
       font-size: 1.05rem;
       font-weight: 500;
-      color: #b4b4bd;
+      color: var(--text);
       max-width: 56ch;
       margin: 0;
     }
@@ -276,9 +276,9 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     .intro .tags span {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.76rem;
-      color: #b4b4bd;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
+      background: var(--tint);
+      border: 1px solid var(--border);
       border-radius: 999px;
       padding: 0.3rem 0.85rem;
     }
@@ -324,7 +324,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.78rem;
       line-height: 1.75;
-      color: #7ee787;
+      color: var(--accent);
       white-space: pre-wrap;
     }
     .term-muted {
@@ -335,7 +335,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       width: 6px;
       height: 0.9em;
       margin-left: 2px;
-      background: #7ee787;
+      background: var(--accent);
       vertical-align: -0.1em;
       animation: term-blink 1s step-end infinite;
     }
