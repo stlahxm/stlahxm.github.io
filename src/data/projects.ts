@@ -93,6 +93,9 @@ export const projects: ProjectEntity[] = [
       "Docker",
       "GCP",
       "JUnit5/Mockito",
+      "Prometheus",
+      "Grafana",
+      "SLF4J",
     ],
     problemRoleApproach: [
       {
