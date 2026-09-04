@@ -102,7 +102,7 @@ export const work: WorkEntity[] = [
     imageFit: "contain",
     name: "땅보고 (공공데이터 활용 창업경진대회)",
     role: "서비스 개발 전담",
-    period: "2026.07 ~ 현재",
+    period: "2026.07 – 2026.09",
     summary: "국토교통부·한국농어촌공사 등 공공데이터 오픈 API 연동, 농지 위험 요인 수집 파이프라인 구축",
     metrics: [{ label: "응답 단축", value: "p95 32.8%↓" }, { label: "처리량", value: "1.6배" }],
     contributions: [
