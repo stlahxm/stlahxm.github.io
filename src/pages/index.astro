@@ -12,11 +12,14 @@ const recentPosts = posts.slice(0, 3);
 // 주력 기술 스택 — about.astro 스킬 목록과 동일, 각 항목의 "경험"은
 // work.ts/projects.ts에 실제로 적힌 성과에서만 가져옴(지어낸 내용 없음)
 // color는 로고 대신 카드에 쓰는 장식용 글로우 색(실제 브랜드 컬러에 가깝게)
+// Java/Spring 백엔드 롤 포지셔닝에 맞춰 핵심 스택 위주로 구성 — Python은 프로젝트별
+// 스택(아래 carousel)에서만 보여주고 여기 요약 목록에선 뺐음
 const skills = [
   { name: "Java", sub: "Spring Boot", exp: "동시성 제어·AOP·Executor 격리로 스레드 병목 해결", color: "#f89820" },
   { name: "Spring Security", sub: "Auth", exp: "JWT 기반 인증/인가 구조 설계", color: "#6db33f" },
   { name: "JPA", sub: "Hibernate", exp: "복합 인덱스로 락 범위 축소, N+1 쿼리 제거", color: "#e8a33d" },
   { name: "QueryDSL", sub: "Query Builder", exp: "Spring Data JPA/QueryDSL로 도메인 모델링", color: "#8b5cf6" },
+  { name: "JUnit5", sub: "Mockito", exp: "에듀템·모릭·핏핏 전 프로젝트 단위·통합 테스트 작성", color: "#25a162" },
   { name: "MySQL", sub: "RDB", exp: "함수형 유니크 인덱스로 데드락 제거", color: "#4479a1" },
   { name: "PostgreSQL", sub: "RDB", exp: "Cloud SQL → Self-host 마이그레이션, 커넥션 풀 튜닝", color: "#336791" },
   { name: "Redis", sub: "Cache", exp: "Redis+ARQ 백그라운드 워커, 캐시 스탬피드 방지", color: "#dc382d" },
@@ -25,7 +28,6 @@ const skills = [
   { name: "GCP", sub: "Cloud", exp: "Cloud Run·Pub/Sub 기반 실시간 알림 파이프라인", color: "#4285f4" },
   { name: "GitHub Actions", sub: "CI/CD", exp: "gitleaks·semgrep 정적분석·시크릿 스캔 자동화", color: "#2088ff" },
   { name: "k6", sub: "Load Test", exp: "150 VU 부하테스트로 커넥션 풀 병목을 재현·검증", color: "#7d64ff" },
-  { name: "Python", sub: "FastAPI", exp: "FastAPI 기반 AI 백그라운드 파이프라인 구현", color: "#3776ab" },
 ];
 
 // AI 활용 방식 3가지 — 모릭(Mori-Q) 프로젝트의 실제 RAG 파이프라인 규칙(CLAUDE.md)과
@@ -74,6 +76,7 @@ const featuredProjects = projects.map((p) => ({
   desc: p.summary,
   badge: p.badge,
   metrics: p.metrics.slice(0, 3),
+  stack: p.stack ?? [],
 }));
 const featuredWork = work.map((w) => ({
   href: `/work/${w.slug}/`,
@@ -201,6 +204,11 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
                 <h3>{item.name}</h3>
                 <p class="carousel-tag">{item.tag}</p>
                 <p class="feature-desc">{item.desc}</p>
+                {item.stack.length > 0 && (
+                  <div class="carousel-stack">
+                    {item.stack.map((s) => <span>{s}</span>)}
+                  </div>
+                )}
                 <div class="carousel-metrics">
                   {item.metrics.map((m) => (
                     <span><strong>{m.value}</strong>{m.label}</span>
@@ -837,6 +845,20 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       font-size: 0.95rem;
       max-width: 65ch;
       margin-bottom: 1.6rem;
+    }
+    .carousel-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.6rem;
+    }
+    .carousel-stack span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.2rem 0.65rem;
     }
     .carousel-metrics {
       display: flex;

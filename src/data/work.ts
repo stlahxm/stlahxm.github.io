@@ -21,6 +21,8 @@ export interface WorkEntity {
   period: string;
   summary: string;
   metrics: { label: string; value: string }[];
+  /** 실제로 이 프로젝트에서 사용한 기술 스택 — 근거 없는 항목은 넣지 않음(비워도 됨) */
+  stack?: string[];
   contributions: WorkContribution[];
 }
 
@@ -40,6 +42,7 @@ export const work: WorkEntity[] = [
       { label: "데드락", value: "500 VUs, 0건" },
       { label: "핵심 API 방어", value: "지연 124ms" },
     ],
+    stack: ["Java 17", "Spring Boot", "JPA/Hibernate", "MySQL", "JUnit5/Mockito"],
     contributions: [
       {
         title: "순차 호출 커넥션 점유 개선",
@@ -83,6 +86,7 @@ export const work: WorkEntity[] = [
     period: "탄소중립 INNOVATION ACADEMY 최우수상 · 2025.12",
     summary: "상품 등록·거래·판매자-구매자 채팅 기능 구현, 가상 피팅 API 연동",
     metrics: [{ label: "수상", value: "최우수상" }],
+    stack: ["Java", "Spring Boot", "JPA/Hibernate", "QueryDSL", "AWS EC2", "JUnit5/Mockito"],
     contributions: [
       {
         title: "백엔드·AI 기능 전담 개발",

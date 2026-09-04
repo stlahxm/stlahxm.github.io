@@ -22,6 +22,8 @@ export interface ProjectEntity {
   summary: string;
   links: { label: string; href: string }[];
   metrics: { label: string; value: string }[];
+  /** 실제로 이 프로젝트에서 사용한 기술 스택 — 근거 없는 항목은 넣지 않음(비워도 됨) */
+  stack?: string[];
   contributions: ProjectContribution[];
   /** 라이브 서비스 URL — 상세 페이지에 임베드 미리보기로 표시 */
   demoUrl?: string;
@@ -79,6 +81,18 @@ export const projects: ProjectEntity[] = [
       { label: "쿼리 수 고정", value: "881회→3회" },
       { label: "100 VU 부하테스트 p95", value: "3.55s→350.8ms" },
       { label: "월 인프라 고정비", value: "$23~26→$0~2" },
+    ],
+    stack: [
+      "Java 17",
+      "Spring Boot",
+      "Spring Security (JWT)",
+      "JPA/Hibernate",
+      "PostgreSQL",
+      "Redis",
+      "Python (FastAPI)",
+      "Docker",
+      "GCP",
+      "JUnit5/Mockito",
     ],
     problemRoleApproach: [
       {
@@ -161,6 +175,7 @@ export const projects: ProjectEntity[] = [
       { label: "다운로드", value: "3600+" },
       { label: "자동 정제율", value: "응답 20%+" },
     ],
+    stack: ["Python", "Java"],
     problemRoleApproach: [
       {
         label: "문제",

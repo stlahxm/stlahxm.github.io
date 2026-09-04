@@ -44,6 +44,7 @@ const activities = work.filter((w) => w.type === "활동");
           <span>Spring Security (JWT)</span>
           <span>JPA/Hibernate</span>
           <span>QueryDSL</span>
+          <span>JUnit5/Mockito</span>
           <span>MySQL</span>
           <span>PostgreSQL</span>
           <span>Redis</span>
@@ -52,7 +53,6 @@ const activities = work.filter((w) => w.type === "활동");
           <span>GCP</span>
           <span>GitHub Actions</span>
           <span>k6</span>
-          <span>Python (FastAPI)</span>
         </div>
       </div>
 
@@ -66,6 +66,11 @@ const activities = work.filter((w) => w.type === "활동");
                 <p class="project-eyebrow">{p.no} · {p.period}</p>
                 <h3 class="project-title">{p.name} <span class="entity-arrow">↗</span></h3>
                 <p class="project-desc">{p.summary}</p>
+                {p.stack && p.stack.length > 0 && (
+                  <div class="project-stack">
+                    {p.stack.map((s) => <span>{s}</span>)}
+                  </div>
+                )}
                 <div class="project-metrics">
                   {p.metrics.map((m) => (
                     <span><strong>{m.value}</strong> {m.label}</span>
@@ -93,6 +98,11 @@ const activities = work.filter((w) => w.type === "활동");
               <span class="entity-main">
                 <span class="entity-name">{job.name}</span>
                 <span class="entity-sub">{job.role}</span>
+                {job.stack && job.stack.length > 0 && (
+                  <span class="entity-stack">
+                    {job.stack.map((s) => <span>{s}</span>)}
+                  </span>
+                )}
               </span>
               <span class="period">{job.period}</span>
               <span class="entity-arrow">↗</span>
@@ -141,6 +151,11 @@ const activities = work.filter((w) => w.type === "활동");
                 <p class="project-eyebrow">{a.period}</p>
                 <h3 class="project-title">{a.name} <span class="entity-arrow">↗</span></h3>
                 <p class="project-desc">{a.summary}</p>
+                {a.stack && a.stack.length > 0 && (
+                  <div class="project-stack">
+                    {a.stack.map((s) => <span>{s}</span>)}
+                  </div>
+                )}
                 <div class="project-metrics">
                   {a.metrics.map((m) => (
                     <span><strong>{m.value}</strong> {m.label}</span>
@@ -437,6 +452,20 @@ const activities = work.filter((w) => w.type === "활동");
         max-width: 60ch;
         margin: 0 0 1rem;
       }
+      .project-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0 0 1rem;
+      }
+      .project-stack span {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.15rem 0.6rem;
+      }
       .project-metrics {
         display: flex;
         flex-wrap: wrap;
@@ -542,6 +571,20 @@ const activities = work.filter((w) => w.type === "활동");
       .entity-sub {
         font-size: 0.88rem;
         color: var(--text-muted);
+      }
+      .entity-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-top: 0.4rem;
+      }
+      .entity-stack span {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.68rem;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 0.1rem 0.5rem;
       }
       .entity-arrow {
         color: var(--text-muted);
