@@ -19,7 +19,7 @@ const activities = work.filter((w) => w.type === "활동");
   title="심현민 · 소개"
   description="동시성 제어, 쿼리·인덱스 최적화, 오픈소스 기여를 해온 백엔드 개발자 심현민의 포트폴리오"
 >
-    <main id="top">
+    <main id="main-content">
     <div class="resume-sheet">
       <header class="resume-header">
         <div class="resume-heading">
@@ -68,7 +68,7 @@ const activities = work.filter((w) => w.type === "활동");
                 </div>
               </div>
               <div class:list={["project-image", { "is-contain": p.imageFit === "contain" }]}>
-                {p.logo ? <img src={p.logo} alt="" /> : p.badge}
+                {p.logo ? <img src={p.logo} alt={p.name} loading="lazy" /> : p.badge}
               </div>
             </a>
           ))
@@ -83,7 +83,7 @@ const activities = work.filter((w) => w.type === "활동");
           career.map((job) => (
             <a class="entity-row" href={`/work/${job.slug}/`}>
               <span class="entity-logo">
-                {job.logo ? <img src={job.logo} alt="" /> : job.badge}
+                {job.logo ? <img src={job.logo} alt={job.name} loading="lazy" /> : job.badge}
               </span>
               <span class="entity-main">
                 <span class="entity-name">{job.name}</span>
@@ -143,7 +143,7 @@ const activities = work.filter((w) => w.type === "활동");
                 </div>
               </div>
               <div class:list={["project-image", { "is-contain": a.imageFit === "contain" }]}>
-                {a.logo ? <img src={a.logo} alt="" /> : a.badge}
+                {a.logo ? <img src={a.logo} alt={a.name} loading="lazy" /> : a.badge}
               </div>
             </a>
           ))
@@ -445,6 +445,7 @@ const activities = work.filter((w) => w.type === "활동");
         display: block;
         font-size: 1.05rem;
         font-weight: 700;
+        font-variant-numeric: tabular-nums;
         color: var(--text-heading);
       }
       .project-image {

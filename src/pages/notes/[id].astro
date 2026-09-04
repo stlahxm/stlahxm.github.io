@@ -15,7 +15,7 @@ const { Content } = await render(note);
 ---
 
 <BaseLayout title={`${note.data.title} · 노트`} description={note.data.summary}>
-  <main>
+  <main id="main-content">
     <a class="back" href="/notes">← 노트 목록</a>
     <p class="note-meta">
       {note.data.pubDate.toLocaleDateString("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" })}

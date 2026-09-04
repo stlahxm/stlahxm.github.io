@@ -65,7 +65,7 @@ const featured = [
 ---
 
 <BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
-  <main>
+  <main id="main-content">
     <section class="intro">
       <div class="intro-glow" aria-hidden="true"></div>
       <p class="intro-eyebrow">심현민 · backend engineer</p>
@@ -151,7 +151,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
           featured.map((item) => (
             <a class="feature-card reveal" href={item.href}>
               <div class:list={["feature-cover", { "is-contain": item.imageFit === "contain" }]}>
-                {item.logo ? <img src={item.logo} alt="" /> : <span>{item.badge}</span>}
+                {item.logo ? <img src={item.logo} alt={item.name} loading="lazy" /> : <span>{item.badge}</span>}
               </div>
               <div class="feature-body">
                 <p class="feature-meta">{item.kind} · {item.period}</p>
@@ -241,6 +241,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       letter-spacing: -0.01em;
       margin: 0 0 1.2rem;
       max-width: none;
+      text-wrap: balance;
       color: #f5f5f7;
     }
     .intro h1 mark {
@@ -328,6 +329,11 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       background: #7ee787;
       vertical-align: -0.1em;
       animation: term-blink 1s step-end infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .term-cursor {
+        animation: none;
+      }
     }
     @keyframes term-blink {
       50% {

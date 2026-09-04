@@ -24,11 +24,11 @@ const relatedPosts = (related.length > 0 ? related : others).slice(0, 3);
 ---
 
 <BaseLayout title={`${post.data.title} · 심현민`} description={post.data.description}>
-  <main>
+  <main id="main-content">
     <a class="back" href="/">← 글 목록</a>
     {post.data.cover && (
       <div class:list={["cover-frame", { "is-logo": post.data.coverFit === "logo" }]}>
-        <img src={post.data.cover} alt="" />
+        <img src={post.data.cover} alt={post.data.title} />
       </div>
     )}
     <p class="post-meta">
@@ -67,7 +67,7 @@ const relatedPosts = (related.length > 0 ? related : others).slice(0, 3);
           relatedPosts.map((p) => (
             <a class="more-post-card" href={`/posts/${p.id}/`}>
               <div class:list={["more-post-cover", { "is-logo": p.data.coverFit === "logo" }]}>
-                {p.data.cover ? <img src={p.data.cover} alt="" /> : <span>{p.data.badge}</span>}
+                {p.data.cover ? <img src={p.data.cover} alt={p.data.title} loading="lazy" /> : <span>{p.data.badge}</span>}
               </div>
               <div class="more-post-body">
                 <p class="more-post-meta">
@@ -308,6 +308,7 @@ const relatedPosts = (related.length > 0 ? related : others).slice(0, 3);
     .stat-value {
       font-size: 1.6rem;
       font-weight: 700;
+      font-variant-numeric: tabular-nums;
       color: var(--accent);
       margin: 0 0 0.35rem;
     }

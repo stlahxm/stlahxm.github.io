@@ -19,6 +19,9 @@ const isNotes = path.startsWith("/notes");
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
       rel="stylesheet"
       as="style"
@@ -27,6 +30,7 @@ const isNotes = path.startsWith("/notes");
     />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
     <div class="layout">
       <aside class="side-nav">
         <a href="/" class="brand">심현민</a>
@@ -92,7 +96,26 @@ const isNotes = path.startsWith("/notes");
           --text-heading: #ffffff;
           --accent: #60a5fa;
           --tint: #17181c;
+          color-scheme: dark;
         }
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -3rem;
+        left: 1rem;
+        z-index: 100;
+        background: var(--accent);
+        color: #fff;
+        padding: 0.6rem 1.1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: top 0.15s;
+      }
+      .skip-link:focus {
+        top: 1rem;
+        text-decoration: none;
       }
 
       * {

@@ -34,7 +34,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
 ---
 
 <BaseLayout title="심현민 · 글" description="백엔드 문제 해결 기록 — 동시성, 쿼리 최적화, AI 연동 아키텍처">
-  <main>
+  <main id="main-content">
     <section class="page-head">
       <h1>전체 글 <span class="count">({posts.length})</span></h1>
       <div class="sort-toggle" id="sort-toggle">
@@ -54,6 +54,8 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
       }
     </div>
 
+    <p class="sr-only" id="filter-status" role="status" aria-live="polite"></p>
+
     <div class="post-list" id="post-grid">
       {
         posts.map((post) => (
@@ -65,7 +67,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
           >
             <div class:list={["post-cover", { "is-logo": post.data.coverFit === "logo" }]}>
               {post.data.cover ? (
-                <img src={post.data.cover} alt="" />
+                <img src={post.data.cover} alt={post.data.title} loading="lazy" />
               ) : (
                 <span>{post.data.badge}</span>
               )}
@@ -96,30 +98,69 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
 
   <script>
     const sortEl = document.getElementById("sort-toggle");
-    const gridForSort = document.getElementById("post-grid");
+    const filterEl = document.getElementById("tag-filter");
+    const gridEl = document.getElementById("post-grid");
+    const statusEl = document.getElementById("filter-status");
+    if (!sortEl || !filterEl || !gridEl) throw new Error("posts list: required elements missing");
 
-    sortEl?.addEventListener("click", (e) => {
-      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".sort-btn");
-      if (!btn || !gridForSort) return;
-      const order = btn.dataset.sort;
+    const params = new URLSearchParams(location.search);
+    const active = new Set<string>((params.get("tag") ?? "").split(",").filter(Boolean));
+    let order = params.get("sort") === "oldest" ? "oldest" : "newest";
 
-      sortEl.querySelectorAll<HTMLButtonElement>(".sort-btn").forEach((el) => {
-        el.classList.toggle("active", el === btn);
-      });
+    function syncUrl() {
+      const next = new URLSearchParams();
+      if (active.size > 0) next.set("tag", [...active].join(","));
+      if (order === "oldest") next.set("sort", "oldest");
+      const qs = next.toString();
+      history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+    }
 
-      const cards = [...gridForSort.querySelectorAll<HTMLAnchorElement>(".post-card")];
+    function applySort() {
+      const cards = [...gridEl!.querySelectorAll<HTMLAnchorElement>(".post-card")];
       cards.sort((a, b) => {
         const diff = Number(a.dataset.pubdate) - Number(b.dataset.pubdate);
         return order === "oldest" ? diff : -diff;
       });
-      cards.forEach((card) => gridForSort.appendChild(card));
+      cards.forEach((card) => gridEl!.appendChild(card));
+
+      sortEl!.querySelectorAll<HTMLButtonElement>(".sort-btn").forEach((el) => {
+        el.classList.toggle("active", el.dataset.sort === order);
+      });
+    }
+
+    function applyFilter() {
+      filterEl!.querySelectorAll<HTMLButtonElement>(".tag-chip").forEach((el) => {
+        const t = el.dataset.tag ?? "";
+        el.classList.toggle("active", t === "" ? active.size === 0 : active.has(t));
+      });
+
+      let visibleCount = 0;
+      gridEl!.querySelectorAll<HTMLAnchorElement>(".post-card").forEach((card) => {
+        const cardTags = (card.dataset.tags ?? "").split(",");
+        const visible = active.size === 0 || cardTags.some((t) => active.has(t));
+        card.style.display = visible ? "" : "none";
+        if (visible) visibleCount++;
+      });
+
+      if (statusEl) {
+        statusEl.textContent =
+          active.size === 0 ? `전체 글 ${visibleCount}개` : `${[...active].join(", ")} 태그 글 ${visibleCount}개`;
+      }
+    }
+
+    // URL의 초기 상태(공유된 링크, 새로고침) 복원
+    applySort();
+    applyFilter();
+
+    sortEl.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".sort-btn");
+      if (!btn) return;
+      order = btn.dataset.sort === "oldest" ? "oldest" : "newest";
+      applySort();
+      syncUrl();
     });
 
-    const filterEl = document.getElementById("tag-filter");
-    const gridEl = document.getElementById("post-grid");
-    const active = new Set<string>();
-
-    filterEl?.addEventListener("click", (e) => {
+    filterEl.addEventListener("click", (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".tag-chip");
       if (!btn) return;
       const tag = btn.dataset.tag ?? "";
@@ -130,16 +171,8 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
         active.has(tag) ? active.delete(tag) : active.add(tag);
       }
 
-      filterEl.querySelectorAll<HTMLButtonElement>(".tag-chip").forEach((el) => {
-        const t = el.dataset.tag ?? "";
-        el.classList.toggle("active", t === "" ? active.size === 0 : active.has(t));
-      });
-
-      gridEl?.querySelectorAll<HTMLAnchorElement>(".post-card").forEach((card) => {
-        const cardTags = (card.dataset.tags ?? "").split(",");
-        const visible = active.size === 0 || cardTags.some((t) => active.has(t));
-        card.style.display = visible ? "" : "none";
-      });
+      applyFilter();
+      syncUrl();
     });
   </script>
 
@@ -147,6 +180,17 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]);
     main {
       width: 100%;
       padding: 2.5rem 2.5rem 4rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
     .page-head {
       display: flex;
