@@ -120,6 +120,8 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       </div>
     </section>
 
+    <div class="scroll-divider reveal" aria-hidden="true"><span class="divider-dot"></span></div>
+
     <section class="values">
       <div class="section-head section-head--stack">
         <p class="section-eyebrow">HOW I WORK</p>
@@ -389,6 +391,36 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       font-size: 0.9rem;
       color: var(--text-muted);
       margin: 0;
+    }
+
+    .scroll-divider {
+      display: flex;
+      justify-content: center;
+      margin: 4rem 0;
+    }
+    .divider-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 14%, transparent),
+        0 0 24px color-mix(in srgb, var(--accent) 40%, transparent);
+      animation: divider-pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes divider-pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.65;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .divider-dot {
+        animation: none;
+      }
     }
 
     .skills {
