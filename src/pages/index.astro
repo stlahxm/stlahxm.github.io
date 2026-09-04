@@ -13,20 +13,56 @@ const recentPosts = posts.slice(0, 3);
 // work.ts/projects.ts에 실제로 적힌 성과에서만 가져옴(지어낸 내용 없음)
 // color는 로고 대신 카드에 쓰는 장식용 글로우 색(실제 브랜드 컬러에 가깝게)
 // Java/Spring 백엔드 롤 포지셔닝에 맞춰 핵심 스택 위주로 구성 — Python은 프로젝트별
-// 스택(아래 carousel)에서만 보여주고 여기 요약 목록에선 뺐음
-const skills = [
-  { name: "Java", sub: "Spring Boot", exp: "동시성 제어·AOP·Executor 격리로 스레드 병목 해결", color: "#f89820" },
-  { name: "JPA", sub: "Hibernate", exp: "복합 인덱스로 락 범위 축소, N+1 쿼리 제거", color: "#e8a33d" },
-  { name: "QueryDSL", sub: "Query Builder", exp: "Spring Data JPA/QueryDSL로 도메인 모델링", color: "#8b5cf6" },
-  { name: "JUnit5", sub: "Mockito", exp: "에듀템·모릭·핏핏 전 프로젝트 단위·통합 테스트 작성", color: "#25a162" },
-  { name: "MySQL", sub: "RDB", exp: "함수형 유니크 인덱스로 데드락 제거", color: "#4479a1" },
-  { name: "PostgreSQL", sub: "RDB", exp: "Cloud SQL → Self-host 마이그레이션, 커넥션 풀 튜닝", color: "#336791" },
-  { name: "Redis", sub: "Cache", exp: "Redis+ARQ 백그라운드 워커, 캐시 스탬피드 방지", color: "#dc382d" },
-  { name: "Docker", sub: "Infra", exp: "AWS EC2 CI/CD 파이프라인 구성", color: "#2496ed" },
-  { name: "AWS", sub: "Cloud", exp: "EC2 기반 배포 파이프라인", color: "#ff9900" },
-  { name: "GCP", sub: "Cloud", exp: "Cloud Run·Pub/Sub 기반 실시간 알림 파이프라인", color: "#4285f4" },
-  { name: "GitHub Actions", sub: "CI/CD", exp: "gitleaks·semgrep 정적분석·시크릿 스캔 자동화", color: "#2088ff" },
-  { name: "k6", sub: "Load Test", exp: "150 VU 부하테스트로 커넥션 풀 병목을 재현·검증", color: "#7d64ff" },
+// 스택(carousel)에서만 보여주고 여기 요약 목록에선 뺐음. 카테고리별로 묶어서 표시.
+const skillCategories = [
+  {
+    label: "Language & Framework",
+    color: "#f89820",
+    items: [
+      { name: "Java", sub: "Spring Boot", exp: "동시성 제어·AOP·Executor 격리로 스레드 병목 해결", color: "#f89820" },
+    ],
+  },
+  {
+    label: "ORM & Query",
+    color: "#e8a33d",
+    items: [
+      { name: "JPA", sub: "Hibernate", exp: "복합 인덱스로 락 범위 축소, N+1 쿼리 제거", color: "#e8a33d" },
+      { name: "QueryDSL", sub: "Query Builder", exp: "Spring Data JPA/QueryDSL로 도메인 모델링", color: "#8b5cf6" },
+    ],
+  },
+  {
+    label: "Database",
+    color: "#4479a1",
+    items: [
+      { name: "MySQL", sub: "RDB", exp: "함수형 유니크 인덱스로 데드락 제거", color: "#4479a1" },
+      { name: "PostgreSQL", sub: "RDB", exp: "Cloud SQL → Self-host 마이그레이션, 커넥션 풀 튜닝", color: "#336791" },
+      { name: "Redis", sub: "Cache", exp: "Redis+ARQ 백그라운드 워커, 캐시 스탬피드 방지", color: "#dc382d" },
+    ],
+  },
+  {
+    label: "Infra & Cloud",
+    color: "#2496ed",
+    items: [
+      { name: "Docker", sub: "Infra", exp: "AWS EC2 CI/CD 파이프라인 구성", color: "#2496ed" },
+      { name: "AWS", sub: "Cloud", exp: "EC2 기반 배포 파이프라인", color: "#ff9900" },
+      { name: "GCP", sub: "Cloud", exp: "Cloud Run·Pub/Sub 기반 실시간 알림 파이프라인", color: "#4285f4" },
+    ],
+  },
+  {
+    label: "Testing & Quality",
+    color: "#25a162",
+    items: [
+      { name: "JUnit5", sub: "Mockito", exp: "에듀템·모릭·핏핏 전 프로젝트 단위·통합 테스트 작성", color: "#25a162" },
+      { name: "k6", sub: "Load Test", exp: "150 VU 부하테스트로 커넥션 풀 병목을 재현·검증", color: "#7d64ff" },
+    ],
+  },
+  {
+    label: "Collaboration & CI/CD",
+    color: "#2088ff",
+    items: [
+      { name: "GitHub Actions", sub: "CI/CD", exp: "gitleaks·semgrep 정적분석·시크릿 스캔 자동화", color: "#2088ff" },
+    ],
+  },
 ];
 
 // AI 활용 방식 3가지 — 모릭(Mori-Q) 프로젝트의 실제 RAG 파이프라인 규칙(CLAUDE.md)과
@@ -136,15 +172,25 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
         <p class="section-eyebrow">SKILLS</p>
         <h2>실제로 문제를 해결하며 다뤄온 기술입니다.</h2>
       </div>
-      <div class="skills-row reveal">
+      <div class="skills-web reveal">
         {
-          skills.map((s) => (
-            <div class="skill-pill" style={`--sc: ${s.color}`} tabindex="0" aria-label={`${s.name}: ${s.exp}`}>
-              <span class="skill-pill-dot" aria-hidden="true" />
-              <span class="skill-pill-name">{s.name}</span>
-              <div class="skill-tooltip" role="tooltip" aria-hidden="true">
-                <span class="skill-tooltip-sub">{s.sub}</span>
-                <span>{s.exp}</span>
+          skillCategories.map((cat) => (
+            <div class="skill-category">
+              <p class="skill-category-label" style={`--cc: ${cat.color}`}>
+                <span class="skill-category-dot" aria-hidden="true" />
+                {cat.label}
+              </p>
+              <div class="skill-branch">
+                {cat.items.map((s) => (
+                  <div class="skill-pill" style={`--sc: ${s.color}`} tabindex="0" aria-label={`${s.name}: ${s.exp}`}>
+                    <span class="skill-pill-dot" aria-hidden="true" />
+                    <span class="skill-pill-name">{s.name}</span>
+                    <div class="skill-tooltip" role="tooltip" aria-hidden="true">
+                      <span class="skill-tooltip-sub">{s.sub}</span>
+                      <span>{s.exp}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))
@@ -619,17 +665,56 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     .skills {
       margin: 4rem 0;
     }
-    .skills-row {
+    .skills-web {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.9rem;
+      gap: 2.4rem 3rem;
+    }
+    .skill-category {
+      flex: 1 1 200px;
+      min-width: 190px;
+    }
+    .skill-category-label {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-heading);
+      margin: 0 0 1.1rem;
+    }
+    .skill-category-dot {
+      width: 9px;
+      height: 9px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--cc);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--cc) 70%, transparent);
+    }
+    .skill-branch {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding-left: 1.1rem;
+      border-left: 2px dashed var(--border);
+    }
+    .skill-branch .skill-pill::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -1.1rem;
+      width: 0.8rem;
+      height: 2px;
+      background: var(--border);
     }
     .skill-pill {
       position: relative;
       display: flex;
       align-items: center;
       gap: 0.55rem;
-      padding: 0.65rem 1.2rem;
+      padding: 0.55rem 1.05rem;
       border: 1px solid var(--border);
       border-radius: 999px;
       background: var(--tint);
