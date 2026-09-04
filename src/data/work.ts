@@ -42,7 +42,7 @@ export const work: WorkEntity[] = [
       { label: "데드락", value: "500 VUs, 0건" },
       { label: "핵심 API 방어", value: "지연 124ms" },
     ],
-    stack: ["Java 17", "Spring Boot", "JPA/Hibernate", "MySQL", "JUnit5/Mockito"],
+    stack: ["Java 17", "Spring Boot", "JPA/Hibernate", "MyBatis", "MySQL", "JUnit5/Mockito"],
     contributions: [
       {
         title: "순차 호출 커넥션 점유 개선",
