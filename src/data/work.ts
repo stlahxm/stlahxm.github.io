@@ -112,4 +112,24 @@ export const work: WorkEntity[] = [
       },
     ],
   },
+  {
+    slug: "ax-startup",
+    type: "활동",
+    badge: "AX",
+    name: "AX 창업 프로그램",
+    role: "단독 참가",
+    period: "우수상 · 2026.07",
+    summary: "시장 조사, 비즈니스 모델(BM) 설계, 투자 유치(IR) 피칭 덱 작성을 주도하며 아이디어의 시장성 검증 프로세스 경험",
+    metrics: [{ label: "수상", value: "우수상" }],
+    contributions: [
+      {
+        title: "시장성 검증 프로세스 주도",
+        desc: "시장 조사, BM 설계, IR 피칭 덱 작성을 주도하며 아이디어의 시장성을 검증",
+      },
+      {
+        title: "고객 피드백 기반 제품 기획",
+        desc: "직접 사용자 피드백을 수집하고 지속적으로 개선점을 제품 기획에 반영하며 비즈니스 관점의 고객 중심 사고 체득",
+      },
+    ],
+  },
 ];
