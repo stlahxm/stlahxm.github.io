@@ -233,7 +233,6 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     </section>
 
     <section class="ai-section">
-      <div class="ai-grid-bg" aria-hidden="true" />
       <div class="section-head section-head--stack">
         <p class="section-eyebrow">HOW I USE AI</p>
         <h2>AI를 도구가 아니라<br />파이프라인으로 다룹니다.</h2>
@@ -242,6 +241,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
         {
           aiApproach.map((a, i) => (
             <div class="ai-card reveal" style={`transition-delay: ${i * 110}ms`}>
+              <div class="ai-card-grid-bg" aria-hidden="true" />
               <p class="ai-index">{String(i + 1).padStart(2, "0")}</p>
               <p class="ai-eyebrow">{a.eyebrow}</p>
               <h3>{a.title}</h3>
@@ -836,45 +836,43 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     }
 
     .ai-section {
-      position: relative;
       margin: 4rem 0;
-      padding: 3rem 2.5rem;
-      border-radius: 20px;
-      overflow: hidden;
-      background: var(--tint);
-      border: 1px solid var(--border);
-    }
-    .ai-grid-bg {
-      position: absolute;
-      inset: 0;
-      background-image:
-        repeating-linear-gradient(0deg, color-mix(in srgb, var(--border) 70%, transparent) 0 1px, transparent 1px 48px),
-        repeating-linear-gradient(90deg, color-mix(in srgb, var(--border) 70%, transparent) 0 1px, transparent 1px 48px);
-      mask-image: radial-gradient(ellipse 80% 70% at 30% 30%, black 20%, transparent 75%);
-      pointer-events: none;
-    }
-    .ai-section .section-head--stack {
-      position: relative;
     }
     .ai-section h2 {
       line-height: 1.35;
     }
     .ai-cards {
-      position: relative;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.5rem;
     }
     .ai-card {
+      position: relative;
+      overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 1.4rem 1.4rem 1.6rem;
-      background: var(--bg);
+      background: var(--tint);
       transition: border-color 0.15s, transform 0.15s;
     }
     .ai-card:hover {
       border-color: var(--accent);
       transform: translateY(-3px);
+    }
+    .ai-card-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--border) 70%, transparent) 0 1px, transparent 1px 32px),
+        repeating-linear-gradient(90deg, color-mix(in srgb, var(--border) 70%, transparent) 0 1px, transparent 1px 32px);
+      mask-image: radial-gradient(ellipse 90% 90% at 30% 20%, black 20%, transparent 80%);
+      pointer-events: none;
+    }
+    .ai-index,
+    .ai-eyebrow,
+    .ai-card h3,
+    .ai-desc {
+      position: relative;
     }
     .ai-index {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -899,11 +897,6 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       color: var(--text-muted);
       line-height: 1.65;
       margin: 0;
-    }
-    @media (max-width: 640px) {
-      .ai-section {
-        padding: 2rem 1.4rem;
-      }
     }
 
     .featured {
