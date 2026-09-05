@@ -12,10 +12,21 @@ const notes = (await getCollection("notes")).sort(
     <h1>노트</h1>
     <p class="lead">공부하면서 정리한 개념</p>
 
-    <ul class="note-list">
+    <div class="search-box">
+      <input
+        type="search"
+        id="note-search"
+        placeholder="제목, 요약, 태그로 검색"
+        aria-label="노트 검색"
+      />
+    </div>
+
+    <p class="sr-only" id="search-status" role="status" aria-live="polite"></p>
+
+    <ul class="note-list" id="note-list">
       {
         notes.map((note) => (
-          <li>
+          <li data-search={`${note.data.title} ${note.data.summary} ${note.data.tags.join(" ")}`.toLowerCase()}>
             <a href={`/notes/${note.id}/`}>
               <p class="note-title">{note.data.title}</p>
               <p class="note-summary">{note.data.summary}</p>
@@ -33,9 +44,45 @@ const notes = (await getCollection("notes")).sort(
           </li>
         ))
       }
-      {notes.length === 0 && <p class="empty">아직 작성된 노트가 없습니다.</p>}
     </ul>
+    {notes.length === 0 && <p class="empty">아직 작성된 노트가 없습니다.</p>}
+    <p class="empty" id="no-results" hidden>검색 결과가 없습니다.</p>
   </main>
+
+  <script>
+    const input = document.getElementById("note-search") as HTMLInputElement | null;
+    const listEl = document.getElementById("note-list");
+    const statusEl = document.getElementById("search-status");
+    const noResultsEl = document.getElementById("no-results");
+    if (!input || !listEl) throw new Error("notes list: required elements missing");
+
+    const items = [...listEl.querySelectorAll<HTMLLIElement>("li")];
+
+    function applySearch(query: string) {
+      const q = query.trim().toLowerCase();
+      let visibleCount = 0;
+      for (const item of items) {
+        const visible = q === "" || (item.dataset.search ?? "").includes(q);
+        item.hidden = !visible;
+        if (visible) visibleCount++;
+      }
+      if (noResultsEl) noResultsEl.hidden = visibleCount > 0;
+      if (statusEl) statusEl.textContent = q === "" ? `전체 노트 ${visibleCount}개` : `"${query}" 검색 결과 ${visibleCount}개`;
+    }
+
+    const params = new URLSearchParams(location.search);
+    const initialQuery = params.get("q") ?? "";
+    input.value = initialQuery;
+    applySearch(initialQuery);
+
+    input.addEventListener("input", () => {
+      applySearch(input.value);
+      const next = new URLSearchParams();
+      if (input.value.trim()) next.set("q", input.value.trim());
+      const qs = next.toString();
+      history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+    });
+  </script>
 
   <style>
     main {
@@ -51,6 +98,35 @@ const notes = (await getCollection("notes")).sort(
       color: var(--text-muted);
       font-size: 0.9rem;
       margin: 0 0 2.5rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .search-box {
+      margin-bottom: 1.6rem;
+    }
+    .search-box input {
+      width: 100%;
+      max-width: 360px;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--tint);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 0.9rem;
+    }
+    .search-box input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
     }
     .note-list {
       list-style: none;
