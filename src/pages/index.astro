@@ -7,6 +7,9 @@ import { openSource } from "../data/opensource";
 
 // 오픈소스 기여 — 레포별로 그룹핑하고 각 기여는 제목 한 줄만 노출,
 // 설명은 스킬 섹션과 동일한 hover 툴팁 패턴으로 숨겨 한눈에 스캔되게 함
+function formatStars(n: number) {
+  return n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : String(n);
+}
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -226,7 +229,7 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
           openSource.map((repo, gi) => (
             <div class="contrib-group reveal" style={`transition-delay: ${gi * 90}ms`}>
               <div class="contrib-group-head">
-                <p class="contrib-repo">{repo.repo}</p>
+                <p class="contrib-repo">{repo.repo} <span class="contrib-stars">★ {formatStars(repo.stars)}</span></p>
                 <span class="contrib-count">{repo.count}</span>
               </div>
               <ul class="contrib-rows">
@@ -833,6 +836,12 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-heading);
+      margin: 0;
+    }
+    .contrib-stars {
+      font-weight: 600;
+      font-size: 0.72rem;
+      color: var(--text-muted);
     }
     .contrib-count {
       font-size: 0.72rem;

@@ -10,6 +10,8 @@ export interface OssItem {
 export interface OssRepo {
   repo: string;
   count: string;
+  /** GitHub stargazers_count, 확인 시점 스냅샷(수동 갱신) */
+  stars: number;
   items: OssItem[];
 }
 
@@ -17,6 +19,7 @@ export const openSource: OssRepo[] = [
   {
     repo: "redisson/redisson",
     count: "5 issues · 4 merged PRs",
+    stars: 24384,
     items: [
       {
         title: "BaseTransactionalMap.isEqual() ByteBuf 누수",
@@ -52,6 +55,7 @@ export const openSource: OssRepo[] = [
   },
   {
     repo: "lukas-krecan/ShedLock",
+    stars: 4218,
     count: "2 issues · 1 PR (리뷰 중)",
     items: [
       {
@@ -64,6 +68,7 @@ export const openSource: OssRepo[] = [
   },
   {
     repo: "langchain4j/langchain4j",
+    stars: 13037,
     count: "2 issues · 1 merged, 1 리뷰 중",
     items: [
       {
