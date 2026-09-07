@@ -83,8 +83,14 @@ const activities = work.filter((w) => w.type === "활동");
                   </div>
                 )}
               </div>
-              <div class:list={["project-image", { "is-contain": p.imageFit === "contain" }]}>
-                {p.logo ? <img src={p.logo} alt={p.name} loading="lazy" /> : p.badge}
+              <div class:list={["project-image", { "is-contain": p.imageFit === "contain" || (!p.logo && !!p.icon) }]}>
+                {p.logo ? (
+                  <img src={p.logo} alt={p.name} loading="lazy" />
+                ) : p.icon ? (
+                  <img src={p.icon} alt={p.name} loading="lazy" />
+                ) : (
+                  p.badge
+                )}
               </div>
             </a>
           ))
