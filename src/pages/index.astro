@@ -5,12 +5,11 @@ import { work } from "../data/work";
 import { projects } from "../data/projects";
 import { openSource } from "../data/opensource";
 
-const contribRepos = openSource.map((repo) => ({
-  name: repo.repo.split("/")[1] ?? repo.repo,
-  url: `https://github.com/${repo.repo}`,
-  count: repo.count,
-  highlight: repo.items[0].title,
-}));
+// 오픈소스 기여 — 레포별 요약 카드 대신 항목 하나하나를 나열(소개 페이지와 동일 구조),
+// 홈에서는 이슈/PR 링크 칩과 강조 배경으로 소개 페이지보다 시각적으로 도드라지게 표시
+const contribItems = openSource.flatMap((repo) =>
+  repo.items.map((item) => ({ repo: repo.repo, ...item })),
+);
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -225,17 +224,21 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
         <h2>오픈소스 기여</h2>
         <a href="/work/opensource">전체 기여 보기 →</a>
       </div>
-      <div class="contrib-cards">
+      <ul class="contrib-list">
         {
-          contribRepos.map((r, i) => (
-            <a class="contrib-card reveal" href={r.url} target="_blank" rel="noreferrer" style={`transition-delay: ${i * 90}ms`}>
-              <p class="contrib-repo">{r.name}</p>
-              <p class="contrib-count">{r.count}</p>
-              <p class="contrib-highlight">{r.highlight}</p>
-            </a>
+          contribItems.map((item, i) => (
+            <li class="contrib-item reveal" style={`transition-delay: ${Math.min(i, 6) * 70}ms`}>
+              <p class="contrib-repo">{item.repo}</p>
+              <p class="contrib-title">{item.title}</p>
+              <p class="contrib-desc">{item.desc}</p>
+              <div class="contrib-links">
+                <a href={item.issue} target="_blank" rel="noreferrer">이슈 ↗</a>
+                <a href={item.pr} target="_blank" rel="noreferrer">PR ↗</a>
+              </div>
+            </li>
           ))
         }
-      </div>
+      </ul>
     </section>
 
     <section class="values">
@@ -799,43 +802,55 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     .contrib-section {
       margin: 4rem 0;
     }
-    .contrib-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
+    .contrib-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
-    .contrib-card {
-      display: block;
+    .contrib-item {
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.4rem 1.4rem 1.6rem;
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 1.1rem 1.4rem;
       background: var(--tint);
-      color: var(--text);
-      transition: border-color 0.15s, transform 0.15s;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
     }
-    .contrib-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
-      text-decoration: none;
+    .contrib-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     }
     .contrib-repo {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.95rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 0.4rem;
+    }
+    .contrib-title {
+      font-size: 1rem;
       font-weight: 700;
       color: var(--text-heading);
       margin: 0 0 0.4rem;
     }
-    .contrib-count {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--accent);
+    .contrib-desc {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+      line-height: 1.65;
       margin: 0 0 0.7rem;
     }
-    .contrib-highlight {
-      font-size: 0.85rem;
+    .contrib-links {
+      display: flex;
+      gap: 1rem;
+    }
+    .contrib-links a {
+      font-size: 0.8rem;
       color: var(--text-muted);
-      line-height: 1.6;
-      margin: 0;
+    }
+    .contrib-links a:hover {
+      color: var(--accent);
     }
 
     .values {
