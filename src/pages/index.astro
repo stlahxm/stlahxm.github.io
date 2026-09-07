@@ -5,11 +5,8 @@ import { work } from "../data/work";
 import { projects } from "../data/projects";
 import { openSource } from "../data/opensource";
 
-// 오픈소스 기여 — 레포별 요약 카드 대신 항목 하나하나를 나열(소개 페이지와 동일 구조),
-// 홈에서는 이슈/PR 링크 칩과 강조 배경으로 소개 페이지보다 시각적으로 도드라지게 표시
-const contribItems = openSource.flatMap((repo) =>
-  repo.items.map((item) => ({ repo: repo.repo, ...item })),
-);
+// 오픈소스 기여 — 레포별로 그룹핑하고 각 기여는 제목 한 줄만 노출,
+// 설명은 스킬 섹션과 동일한 hover 툴팁 패턴으로 숨겨 한눈에 스캔되게 함
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -224,21 +221,29 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
         <h2>오픈소스 기여</h2>
         <a href="/work/opensource">전체 기여 보기 →</a>
       </div>
-      <ul class="contrib-list">
+      <div class="contrib-groups">
         {
-          contribItems.map((item, i) => (
-            <li class="contrib-item reveal" style={`transition-delay: ${Math.min(i, 6) * 70}ms`}>
-              <p class="contrib-repo">{item.repo}</p>
-              <p class="contrib-title">{item.title}</p>
-              <p class="contrib-desc">{item.desc}</p>
-              <div class="contrib-links">
-                <a href={item.issue} target="_blank" rel="noreferrer">이슈 ↗</a>
-                <a href={item.pr} target="_blank" rel="noreferrer">PR ↗</a>
+          openSource.map((repo, gi) => (
+            <div class="contrib-group reveal" style={`transition-delay: ${gi * 90}ms`}>
+              <div class="contrib-group-head">
+                <p class="contrib-repo">{repo.repo}</p>
+                <span class="contrib-count">{repo.count}</span>
               </div>
-            </li>
+              <ul class="contrib-rows">
+                {repo.items.map((item) => (
+                  <li>
+                    <a class="contrib-row" href={item.pr} target="_blank" rel="noreferrer" tabindex="0">
+                      <span class="contrib-title">{item.title}</span>
+                      <span class="contrib-row-arrow" aria-hidden="true">↗</span>
+                      <div class="contrib-tooltip" role="tooltip" aria-hidden="true">{item.desc}</div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))
         }
-      </ul>
+      </div>
     </section>
 
     <section class="values">
@@ -802,55 +807,112 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
     .contrib-section {
       margin: 4rem 0;
     }
-    .contrib-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
+    .contrib-groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      align-items: start;
     }
-    .contrib-item {
+    .contrib-group {
       border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 8px;
-      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      padding: 1rem 1.1rem 0.6rem;
       background: var(--tint);
-      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
     }
-    .contrib-item:hover {
-      transform: translateX(4px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    .contrib-group-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.6rem;
+      padding-bottom: 0.6rem;
+      margin-bottom: 0.2rem;
+      border-bottom: 1px solid var(--border);
     }
     .contrib-repo {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--accent);
-      margin: 0 0 0.25rem;
-    }
-    .contrib-title {
-      font-size: 0.92rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-heading);
-      margin: 0 0 0.3rem;
     }
-    .contrib-desc {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-      margin: 0 0 0.5rem;
-    }
-    .contrib-links {
-      display: flex;
-      gap: 0.8rem;
-    }
-    .contrib-links a {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-    }
-    .contrib-links a:hover {
+    .contrib-count {
+      font-size: 0.72rem;
       color: var(--accent);
+      white-space: nowrap;
+    }
+    .contrib-rows {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .contrib-rows li {
+      border-bottom: 1px solid var(--border);
+    }
+    .contrib-rows li:last-child {
+      border-bottom: none;
+    }
+    .contrib-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0;
+      color: var(--text);
+    }
+    .contrib-row:hover,
+    .contrib-row:focus-visible {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .contrib-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .contrib-row-arrow {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: auto;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .contrib-row:hover .contrib-row-arrow,
+    .contrib-row:focus-visible .contrib-row-arrow {
+      opacity: 1;
+    }
+    .contrib-tooltip {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: max-content;
+      max-width: min(360px, 90vw);
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.8rem;
+      font-weight: 400;
+      line-height: 1.55;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s, transform 0.15s;
+      transform: translateY(4px);
+      z-index: 20;
+    }
+    .contrib-row:hover .contrib-tooltip,
+    .contrib-row:focus-visible .contrib-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .contrib-row-arrow,
+      .contrib-tooltip {
+        transition: none;
+      }
     }
 
     .values {
