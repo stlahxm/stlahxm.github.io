@@ -228,8 +228,6 @@ export const projects: ProjectEntity[] = [
     slug: "lc4j-lens",
     no: "03",
     badge: "LZ",
-    logo: "/covers/lc4j-lens.png",
-    imageFit: "cover",
     name: "lc4j-lens",
     period: "2026.09 ~",
     tag: "LangChain4j EmbeddingStore 디버깅 오픈소스",
@@ -238,35 +236,32 @@ export const projects: ProjectEntity[] = [
       { label: "GitHub", href: "https://github.com/stlahxm/lc4j-lens" },
       { label: "Discussion", href: "https://github.com/langchain4j/langchain4j/discussions/6327" },
     ],
-    metrics: [
-      { label: "langchain4j 메인테이너 반응", value: "Discussion 코멘트 + Star" },
-      { label: "외부 기여자", value: "1명 (good first issue)" },
-    ],
+    metrics: [],
     subtitle:
       "\"가까운 점 = 의미적으로 비슷한 청크\"가 성립하려면 이웃 관계를 보존하는 축소 기법이어야 한다는 걸, PCA로 한 번 틀려보고서야 알았습니다.",
     stack: ["Java 17", "LangChain4j", "t-SNE (bh-tsne)", "JDK HttpServer"],
     problemRoleApproach: [
       {
-        label: "문제",
-        body: "RAG 파이프라인에서 리트리버가 이상한 청크를 반환해도, EmbeddingStore 내부에서 실제로 어떤 벡터들이 가까이 있었는지 눈으로 확인할 방법이 없어 디버깅이 감에 의존했습니다.",
+        label: "배경",
+        body: "LangChain4j로 RAG를 붙이면서 리트리버가 이상한 청크를 반환할 때마다 원인을 찾기가 막막했습니다. EmbeddingStore는 벡터 유사도 순으로 결과만 돌려줄 뿐, '왜 이 청크가 뽑혔는지'를 실제로 눈으로 확인할 방법이 없었습니다. 로그로 코사인 유사도 숫자만 보고 감으로 판단하던 게 불편해서, 저장된 임베딩 전체를 눈에 보이는 지도로 만들면 되겠다는 생각으로 시작했습니다.",
       },
       {
-        label: "역할",
-        body: "아이디어 설계부터 구현까지 단독으로 진행. 초기 PCA 기반 시각화가 이웃 유사도를 보존하지 못해 무의미하게 흩어져 보이는 문제를 발견하고 t-SNE로 교체했습니다.",
+        label: "무엇을 해결하나",
+        body: "쿼리를 던지면 EmbeddingStore에 저장된 모든 벡터와 쿼리 벡터를 함께 2차원으로 배치해, 실제로 가까운 벡터가 화면에서도 가깝게 보이도록 시각화합니다. 서버·DB·API 키 없이 로컬에서 바로 실행되고, 저장할 때 쓴 임베딩 모델과 조회할 때 쓴 모델이 다르면 그 자체를 오류로 감지해 경고합니다.",
       },
       {
-        label: "접근",
-        body: "쿼리 시점마다 저장된 임베딩 전체 + 쿼리 벡터를 함께 t-SNE로 재계산해, 실제 쿼리와 가까운 점이 시각적으로도 가깝게 보이도록 만들었습니다. 서로 다른 임베딩 모델로 저장/조회했을 때의 불일치도 감지해 경고합니다.",
+        label: "만들며 겪은 문제",
+        body: "처음엔 PCA로 차원을 축소했는데, PCA는 데이터 전체의 분산 방향만 보존할 뿐 '가까운 점 = 비슷한 의미'라는 전제를 보장하지 않아 결과가 별자리처럼 무의미하게 흩어져 보였습니다. 이웃 관계(로컬 구조)를 보존하는 t-SNE로 바꾸고 나서야, 실제로 의미적으로 비슷한 청크들이 화면에서도 뭉쳐서 나타났습니다.",
       },
     ],
     contributions: [
       {
         title: "PCA → t-SNE 전환",
-        desc: "PCA는 분산만 보존하고 이웃 유사도는 보존하지 않아 결과가 무의미하게 흩어지는 것을 발견, t-SNE로 교체해 실제 의미적으로 가까운 청크가 시각적으로도 가깝게 나오도록 수정",
+        desc: "이웃 유사도를 보존하지 않는 PCA 대신 t-SNE로 교체해, 의미적으로 가까운 청크가 시각적으로도 가깝게 나오도록 수정",
       },
       {
         title: "임베딩 모델 불일치 감지",
-        desc: "저장 시 사용한 임베딩 모델과 조회 시 모델이 다르면 자동으로 감지해 경고를 표시하는 기능 추가",
+        desc: "저장 시 사용한 임베딩 모델과 조회 시 모델이 다르면 자동으로 감지해 화면에 경고를 표시",
       },
     ],
   },
@@ -274,35 +269,33 @@ export const projects: ProjectEntity[] = [
     slug: "llm-cassette",
     no: "04",
     badge: "LC",
-    logo: "/covers/llm-cassette.png",
-    imageFit: "cover",
     name: "llm-cassette",
     period: "2026.09 ~",
     tag: "LangChain4j ChatModel용 VCR 스타일 테스트 오픈소스",
     summary: "Claude Code·Cursor 같은 에이전트가 빠르게 바꾸는 프롬프트의 회귀를, 기존 CI 파이프라인에서 그대로 잡아내는 JUnit5 확장",
     links: [{ label: "GitHub", href: "https://github.com/stlahxm/llm-cassette" }],
-    metrics: [{ label: "검증 환경", value: "Maven + Gradle 실제 소비자 프로젝트" }],
+    metrics: [],
     subtitle:
       "\"AI 에이전트가 diff 속에 묻어서 바꾼 프롬프트\"를 잡아내는 데는, 매번 API를 호출하는 통합 테스트가 아니라 한 번 기록하고 계속 재생하는 VCR 방식이 더 맞았습니다.",
     stack: ["Java 17", "JUnit5", "LangChain4j", "Jackson"],
     problemRoleApproach: [
       {
-        label: "문제",
-        body: "AI 에이전트로 기능을 빠르게 만들다 보면 프롬프트가 큰 diff 속에 묻혀 조용히 바뀌는데, 이걸 잡아낼 방법이 API를 매번 호출하는 통합 테스트뿐이라 비용·속도·결정성 문제가 있었습니다.",
+        label: "배경",
+        body: "Claude Code나 Cursor 같은 에이전트로 기능을 빠르게 만들다 보면, 프롬프트 텍스트가 몇백 줄짜리 diff 속에 묻혀서 조용히 바뀌는 경우가 있습니다. 리뷰어도 사람도 그걸 한 줄 한 줄 다 확인하지 못하고 넘어가고, 나중에 모델 응답 품질이 미묘하게 달라진 다음에야 원인을 찾아 거슬러 올라가는 식이었습니다.",
       },
       {
-        label: "역할",
-        body: "아이디어 설계부터 구현까지 단독으로 진행. Maven/Gradle로 만든 별도 소비자 프로젝트에서 실제 exit code·diff 출력까지 검증했습니다.",
+        label: "무엇을 해결하나",
+        body: "실제 모델 호출을 한 번 기록해두면, 그 다음부터는 기록된 요청과 지금 나가는 요청을 비교해서 프롬프트나 temperature 같은 파라미터가 조금이라도 달라지면 테스트가 실패합니다. API 키 없이도, 매번 실제 모델을 호출하지 않고도 CI에서 그대로 잡아낼 수 있습니다.",
       },
       {
-        label: "접근",
-        body: "ChatModel의 모든 호출이 결국 doChat(ChatRequest) 한 곳을 거친다는 점에 착안해, 그 지점만 가로채는 데코레이터로 구현. 첫 실행은 실제 호출을 기록하고, 이후 실행은 기록된 요청과 비교해 다르면 opentest4j의 AssertionFailedError로 실패시켜 IDE가 자동으로 diff를 보여주게 했습니다.",
+        label: "만들며 겪은 문제",
+        body: "매번 실제 API를 호출하는 통합 테스트로는 비용도 크고 응답이 결정적이지 않아 CI에 넣기 어려웠습니다. LangChain4j의 ChatModel이 결국 doChat(ChatRequest) 한 지점을 거친다는 데 착안해 그 지점만 가로채는 데코레이터로 구현했고, 실제로 CI에서 통하는지 확인하려고 이 저장소 밖에 별도의 Maven·Gradle 프로젝트를 만들어 진짜 exit code와 diff 출력까지 검증했습니다.",
       },
     ],
     contributions: [
       {
-        title: "기록/재생 핵심 로직 구현",
-        desc: "ChatModel.doChat() 단일 지점을 가로채는 데코레이터로 기록/재생/diff/미사용 감지까지 구현, IntelliJ가 자동으로 diff를 렌더링하도록 opentest4j 타입 재사용",
+        title: "기록/재생/diff 핵심 로직 구현",
+        desc: "ChatModel.doChat() 단일 지점을 가로채는 데코레이터로 기록·재생·diff·미사용 감지까지 구현, IntelliJ가 자동으로 diff를 렌더링하도록 opentest4j 타입을 그대로 재사용",
       },
       {
         title: "Maven/Gradle 실제 소비자 프로젝트로 검증",

@@ -33,16 +33,20 @@ const PRA_EN: Record<string, string> = { 문제: "PROBLEM", 역할: "ROLE", 접�
       {entity.links.map((l) => <a href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>)}
     </div>
 
-    <div class="metrics">
-      {
-        entity.metrics.map((m) => (
-          <div class="metric">
-            <p class="metric-value">{m.value}</p>
-            <p class="metric-label">{m.label}</p>
-          </div>
-        ))
-      }
-    </div>
+    {
+      entity.metrics.length > 0 && (
+        <div class="metrics">
+          {
+            entity.metrics.map((m) => (
+              <div class="metric">
+                <p class="metric-value">{m.value}</p>
+                <p class="metric-label">{m.label}</p>
+              </div>
+            ))
+          }
+        </div>
+      )
+    }
 
     {
       entity.logo && entity.subtitle && (

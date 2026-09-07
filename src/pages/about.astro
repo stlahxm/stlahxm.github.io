@@ -75,11 +75,13 @@ const activities = work.filter((w) => w.type === "활동");
                     {p.stack.map((s) => <span>{s}</span>)}
                   </div>
                 )}
-                <div class="project-metrics">
-                  {p.metrics.map((m) => (
-                    <span><strong>{m.value}</strong> {m.label}</span>
-                  ))}
-                </div>
+                {p.metrics.length > 0 && (
+                  <div class="project-metrics">
+                    {p.metrics.map((m) => (
+                      <span><strong>{m.value}</strong> {m.label}</span>
+                    ))}
+                  </div>
+                )}
               </div>
               <div class:list={["project-image", { "is-contain": p.imageFit === "contain" }]}>
                 {p.logo ? <img src={p.logo} alt={p.name} loading="lazy" /> : p.badge}
