@@ -3,6 +3,14 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { work } from "../data/work";
 import { projects } from "../data/projects";
+import { openSource } from "../data/opensource";
+
+const contribRepos = openSource.map((repo) => ({
+  name: repo.repo.split("/")[1] ?? repo.repo,
+  url: `https://github.com/${repo.repo}`,
+  count: repo.count,
+  highlight: repo.items[0].title,
+}));
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -211,6 +219,24 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       </div>
     </section>
 
+
+    <section class="contrib-section">
+      <div class="section-head">
+        <h2>오픈소스 기여</h2>
+        <a href="/work/opensource">전체 기여 보기 →</a>
+      </div>
+      <div class="contrib-cards">
+        {
+          contribRepos.map((r, i) => (
+            <a class="contrib-card reveal" href={r.url} target="_blank" rel="noreferrer" style={`transition-delay: ${i * 90}ms`}>
+              <p class="contrib-repo">{r.name}</p>
+              <p class="contrib-count">{r.count}</p>
+              <p class="contrib-highlight">{r.highlight}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
 
     <section class="values">
       <div class="section-head section-head--stack">
@@ -768,6 +794,48 @@ Java Spring-Boot Concurrency Query-Optimization AI-Integration<span class="term-
       .skill-tooltip {
         transition: none;
       }
+    }
+
+    .contrib-section {
+      margin: 4rem 0;
+    }
+    .contrib-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .contrib-card {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem 1.4rem 1.6rem;
+      background: var(--tint);
+      color: var(--text);
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .contrib-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      text-decoration: none;
+    }
+    .contrib-repo {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      margin: 0 0 0.4rem;
+    }
+    .contrib-count {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 0.7rem;
+    }
+    .contrib-highlight {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
     }
 
     .values {
