@@ -19,7 +19,7 @@ cover: "/covers/cache-stampede-redis-lock.jpg"
 
 이 서비스는 사용자가 업로드한 문서 하나로 요약, 퀴즈, 시험 정리 등 여러 학습 기능을 제공합니다. 요청은 비동기 워커(ARQ)가 큐에서 꺼내 처리하고, 분석 결과는 파일 해시를 키로 캐시에 저장합니다.
 
-![전체 서비스 아키텍처: GitHub Actions CI/CD로 Cloud Run에 배포되는 Next.js/Spring Boot/FastAPI가 PostgreSQL·Redis·Cloud Storage를 공유하고, Async Worker가 Gemini API를 호출하는 구조](/diagrams/analysis-service-architecture.png)
+<img src="/diagrams/analysis-service-architecture.png" alt="전체 서비스 아키텍처: GitHub Actions CI/CD로 Cloud Run에 배포되는 Next.js/Spring Boot/FastAPI가 PostgreSQL·Redis·Cloud Storage를 공유하고, Async Worker가 Gemini API를 호출하는 구조" style="max-width: 75%; margin: 1.5rem auto; display: block;" />
 
 캐싱 설계는 한 번에 완성되지 않았습니다. 이 글은 캐시 구조가 세 번 바뀌는 동안 각 버전이 왜 다음 버전으로 대체됐는지를 기록한 것입니다. 동일 문서에 대한 중복 LLM 호출로 매달 100만 토큰 이상의 API 비용이 새고 있었던 문제를, 최종적으로 캐시 적중률 21.6%·중복 호출 100% 방어까지 개선했습니다.
 
