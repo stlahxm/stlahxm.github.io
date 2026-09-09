@@ -19,7 +19,7 @@ cover: "/covers/cache-stampede-redis-lock.jpg"
 
 이 서비스는 사용자가 업로드한 문서 하나로 요약, 퀴즈, 시험 정리 등 여러 학습 기능을 제공합니다. 요청은 비동기 워커(ARQ)가 큐에서 꺼내 처리하고, 분석 결과는 파일 해시를 키로 캐시에 저장합니다.
 
-![전체 서비스 아키텍처](/diagrams/analysis-service-architecture.png)
+![전체 서비스 아키텍처: GitHub Actions CI/CD로 Cloud Run에 배포되는 Next.js/Spring Boot/FastAPI가 PostgreSQL·Redis·Cloud Storage를 공유하고, Async Worker가 Gemini API를 호출하는 구조](/diagrams/analysis-service-architecture.png)
 
 캐싱 설계는 한 번에 완성되지 않았습니다. 이 글은 캐시 구조가 세 번 바뀌는 동안 각 버전이 왜 다음 버전으로 대체됐는지를 기록한 것입니다. 동일 문서에 대한 중복 LLM 호출로 매달 100만 토큰 이상의 API 비용이 새고 있었던 문제를, 최종적으로 캐시 적중률 21.6%·중복 호출 100% 방어까지 개선했습니다.
 
@@ -68,18 +68,21 @@ DB 데이터는 정상적으로 유지되지만, 이미 두 번의 AI 호출 비
 2. **Redis 분산 락 + ARQ 지연 재시도 (최종 채택)** — 락을 획득한 워커만 AI 분석을 진행하고, 나머지는 DB 커넥션이나 서버 워커를 계속 붙잡지 않은 채 대기 없이 큐로 돌아갑니다. 다만 Redis 자체가 장애를 일으키면 락 획득 여부를 판단할 수 없다는 새로운 의존성이 생깁니다.
 
 ```python
+CACHE_LOCK_TTL_SECONDS = 600  # 락 보유자 하드크래시 시 자동 해제까지 최대 대기(10분)
+CACHE_LOCK_RETRY_DEFER_SECONDS = 30
+
 lock_key = f"cache_lock:{cache_key}"
-acquired = await redis.set(lock_key, "1", nx=True, ex=900)  # TTL 900초
+acquired = await _acquire_redis_lock(redis, lock_key)
 ```
 
 ![Redis 락 + 지연 재시도로 해결하는 시퀀스](/diagrams/redis-lock-retry-sequence.png)
 
-락을 획득하지 못한 워커는 `raise Retry(defer=30)`으로 30초 뒤 재시도하도록 큐에 다시 넣었고, 그사이 락을 획득한 워커가 분석을 마쳐 캐시를 저장하면 재시도 시점에 cache hit으로 전환됩니다. 락의 TTL은 캐시 공백 구간(약 5분)보다 넉넉한 15분으로 설정해, 분석이 예상보다 길어져도 락이 먼저 풀려 다른 워커가 같은 문서를 중복으로 다시 시작하는 상황을 방어했습니다.
+락을 획득하지 못한 워커는 `raise Retry(defer=CACHE_LOCK_RETRY_DEFER_SECONDS)`로 30초 뒤 재시도하도록 큐에 다시 넣었고, 그사이 락을 획득한 워커가 분석을 마쳐 캐시를 저장하면 재시도 시점에 cache hit으로 전환됩니다. 락의 TTL(10분)은 락 보유자가 응답 없이 하드크래시하더라도 자동으로 풀리도록 하는 최대 대기 시간이고, 마지막 허용 재시도까지도 락을 못 잡으면 ERROR 로그를 남겨 알림이 가도록 별도로 처리해뒀습니다.
 
 Redis 장애 시에는 락 획득 함수 자체가 예외를 삼키고 `True`(락 획득 성공)를 반환하도록 fail-safe로 설계했습니다.
 
 ```python
-async def _acquire_redis_lock(redis, lock_key: str, ttl: int) -> bool:
+async def _acquire_redis_lock(redis, lock_key: str, ttl: int = CACHE_LOCK_TTL_SECONDS) -> bool:
     try:
         result = await redis.set(lock_key, "1", nx=True, ex=ttl)
         return result is not None
