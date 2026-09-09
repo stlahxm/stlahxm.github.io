@@ -50,13 +50,8 @@ export const work: WorkEntity[] = [
         postSlug: "completablefuture-connection-scope",
       },
       {
-        title: "복합 인덱스로 락 범위 축소",
-        desc: "인덱스 부재로 인한 풀 테이블 스캔·락 확산을, 조회 조건 순서에 맞춘 복합 인덱스로 해결",
-        postSlug: "composite-index-lock-scope",
-      },
-      {
-        title: "함수형 유니크 인덱스로 데드락 제거",
-        desc: "갭 락 경합으로 인한 데드락을, 선조회 없는 즉시 insert + 유니크 인덱스 조합으로 해결",
+        title: "인덱스로 락 범위와 락 순서 문제를 각각 해결",
+        desc: "인덱스 부재로 인한 풀 테이블 스캔·락 확산을 복합 인덱스로 좁히고, 남은 락 승격 경합은 함수형 유니크 인덱스 + 즉시 insert로 제거",
         postSlug: "functional-unique-index-deadlock",
       },
       {
